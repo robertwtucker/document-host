@@ -43,6 +43,12 @@ const (
 
 // New creates a new logger using the default configuration.
 func New() Logger {
+	l, _ := zap.NewProduction()
+	return NewWithZap(l)
+}
+
+// New creates a new logger using the debug configuration.
+func NewDebug() Logger {
 	l, _ := zap.NewDevelopment()
 	return NewWithZap(l)
 }

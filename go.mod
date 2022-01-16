@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/google/uuid v1.3.0
 	go.uber.org/zap v1.20.0
+	gopkg.in/yaml.v2 v2.2.8
 )
 
 require (
