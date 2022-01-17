@@ -14,24 +14,33 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// default values for configuration settings
-const (
-	defaultPort = "8080"
-)
-
 // ErrFileLoadFailed occurs when the specified config file cannot be read
 var ErrFileLoadFailed = errors.New("error loading configuration file")
 
 // ErrFileDecodeFailed occurs when the config file is not formatted correctly
 var ErrFileDecodeFailed = errors.New("error decoding configuration file")
 
-// Config holds the app configuration settings
-type Config struct {
-	Port string `yaml:"port,omitempty" env:"PORT"`
+// Configuration holds the app configuration settings
+type Configuration struct {
+	Server *Server   `yaml:"server,omitempty"`
+	DB     *Database `yaml:"database,omitempty"`
 }
 
-// Load creates a Config given a properly formatted file
-func Load(file string, logger log.Logger) (*Config, error) {
+// Database holds the database configuration settings
+type Database struct {
+	URI string `yaml:"uri,omitempty" env:"DB_URI"`
+}
+
+// Server holds the HTTP server configuration settings
+type Server struct {
+	Port         string `yaml:"port,omitempty" env:"PORT"`
+	Debug        bool   `yaml:"debug,omitempty"`
+	ReadTimeout  int    `yaml:"read_timeout_seconds,omitempty"`
+	WriteTimeout int    `yaml:"write_timeout_seconds,omitempty"`
+}
+
+// Load creates a Configuration given a properly formatted file
+func Load(file string, logger log.Logger) (*Configuration, error) {
 	logger.Infof("loading config file: %s", file)
 
 	bytes, err := ioutil.ReadFile(file)
@@ -40,15 +49,13 @@ func Load(file string, logger log.Logger) (*Config, error) {
 		return nil, ErrFileLoadFailed
 	}
 
-	c := Config{
-		Port: defaultPort,
-	}
-	if err := yaml.Unmarshal(bytes, &c); err != nil {
+	var cfg = new(Configuration)
+	if err := yaml.Unmarshal(bytes, &cfg); err != nil {
 		logger.Errorf("unable to unmarshal config file: %s", err)
 		return nil, ErrFileDecodeFailed
 	}
 
 	// TODO: Look for ENV variable overrides
 
-	return &c, nil
+	return cfg, nil
 }

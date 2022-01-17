@@ -1,3 +1,4 @@
-db:
+database:
   uri: 'mongodb://localhost:27017'
-port: '8080'
+server:
+  port: '8080'

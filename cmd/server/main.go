@@ -35,7 +35,7 @@ func main() {
 }
 
 // initialize sets up the application configuration and logging
-func initialize() (*config.Config, log.Logger, error) {
+func initialize() (*config.Configuration, log.Logger, error) {
 	var logger log.Logger
 
 	flag.Parse()
@@ -66,7 +66,7 @@ func run() error {
 	// TODO: Set up DB connection
 
 	// TODO: Set up HTTP listener & handlers
-	logger.Infof("app will listen on port %s", cfg.Port)
+	logger.Infof("app will listen on port %s", cfg.Server.Port)
 
 	return nil
 }
