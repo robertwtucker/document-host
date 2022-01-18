@@ -12,8 +12,10 @@ import (
 	logger "log"
 	"os"
 
+	"github.com/robertwtucker/document-host/internal/api"
 	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/pkg/log"
+	"github.com/robertwtucker/document-host/pkg/server"
 )
 
 // version is the application's current version
@@ -65,8 +67,20 @@ func run() error {
 
 	// TODO: Set up DB connection
 
-	// TODO: Set up HTTP listener & handlers
-	logger.Infof("app will listen on port %s", cfg.Server.Port)
+	// Set up API handlers
+	r := api.Routing(cfg, logger)
+
+	// Set up HTTP listener config
+	serverConfig := &server.Config{
+		Addr:                       cfg.Server.Port,
+		ReadTimeoutSeconds:         cfg.Server.ReadTimeout,
+		WriteTimeoutSeconds:        cfg.Server.WriteTimeout,
+	}
+
+	// Start server
+	if err := server.Start(*serverConfig, r, logger); err != nil {
+		logger.Errorf("server error: %s", err)
+	}
 
 	return nil
 }
