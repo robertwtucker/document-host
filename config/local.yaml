@@ -1,4 +1,4 @@
 database:
   uri: 'mongodb://localhost:27017'
 server:
-  port: '8080'
+  addr: :8080

@@ -72,9 +72,10 @@ func run() error {
 
 	// Set up HTTP listener config
 	serverConfig := &server.Config{
-		Addr:                       cfg.Server.Port,
-		ReadTimeoutSeconds:         cfg.Server.ReadTimeout,
-		WriteTimeoutSeconds:        cfg.Server.WriteTimeout,
+		Addr:                   cfg.Server.Addr,
+		ReadTimeoutSeconds:     cfg.Server.ReadTimeoutSeconds,
+		ShutdownTimeoutSeconds: cfg.Server.ShutdownTimeoutSeconds,
+		WriteTimeoutSeconds:    cfg.Server.WriteTimeoutSeconds,
 	}
 
 	// Start server

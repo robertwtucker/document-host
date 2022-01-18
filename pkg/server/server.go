@@ -20,17 +20,17 @@ import (
 
 // Default configuration settings
 var (
-	defaultAddr                       = ":8080"
-	defaultReadTimeoutSeconds         = 10
-	defaultShutdownGracePeriodSeconds = 10
-	defaultWriteTimeoutSeconds        = 5
+	defaultAddr                   = ":8080"
+	defaultReadTimeoutSeconds     = 10
+	defaultShutdownTimeoutSeconds = 10
+	defaultWriteTimeoutSeconds    = 5
 )
 
 // Config represents server-specific configuration items
 type Config struct {
 	Addr                       string
 	ReadTimeoutSeconds         int
-	ShutdownGracePeriodSeconds int
+	ShutdownTimeoutSeconds int
 	WriteTimeoutSeconds        int
 }
 
@@ -44,8 +44,8 @@ func Start(cfg Config, r http.Handler, logger log.Logger) error {
 	if cfg.ReadTimeoutSeconds == 0 {
 		cfg.ReadTimeoutSeconds = defaultReadTimeoutSeconds
 	}
-	if cfg.ShutdownGracePeriodSeconds == 0 {
-		cfg.ShutdownGracePeriodSeconds = defaultShutdownGracePeriodSeconds
+	if cfg.ShutdownTimeoutSeconds == 0 {
+		cfg.ShutdownTimeoutSeconds = defaultShutdownTimeoutSeconds
 	}
 	if cfg.WriteTimeoutSeconds == 0 {
 		cfg.WriteTimeoutSeconds = defaultWriteTimeoutSeconds
@@ -85,7 +85,7 @@ func Start(cfg Config, r http.Handler, logger log.Logger) error {
 		// Give outstanding requests a deadline for completion.
 		ctx, cancel := context.WithTimeout(
 			context.Background(),
-			time.Duration(cfg.ShutdownGracePeriodSeconds)*time.Second)
+			time.Duration(cfg.ShutdownTimeoutSeconds)*time.Second)
 		defer cancel()
 
 		// Ask listener to shutdown and shed load
@@ -93,7 +93,7 @@ func Start(cfg Config, r http.Handler, logger log.Logger) error {
 		if err != nil {
 			logger.Infof(
 				"graceful shutdown did not complete in %v sec : %v",
-				cfg.ShutdownGracePeriodSeconds,
+				cfg.ShutdownTimeoutSeconds,
 				err)
 			err = server.Close()
 			return err

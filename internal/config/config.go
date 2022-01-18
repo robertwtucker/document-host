@@ -33,10 +33,10 @@ type Database struct {
 
 // Server holds the HTTP server configuration settings
 type Server struct {
-	Port         string `yaml:"port,omitempty" env:"PORT"`
-	Debug        bool   `yaml:"debug,omitempty"`
-	ReadTimeout  int    `yaml:"read_timeout_seconds,omitempty"`
-	WriteTimeout int    `yaml:"write_timeout_seconds,omitempty"`
+	Addr                   string `yaml:"addr,omitempty" env:"SERVER_ADDR"`
+	ReadTimeoutSeconds     int    `yaml:"read_timeout_seconds,omitempty"`
+	ShutdownTimeoutSeconds int    `yaml:"shutdown_timeout_seconds,omitempty"`
+	WriteTimeoutSeconds    int    `yaml:"write_timeout_seconds,omitempty"`
 }
 
 // Load creates a Configuration given a properly formatted file
