@@ -34,6 +34,30 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+livenessProbe:
+  # -- Initial delay before probing liveness
+  initialDelaySeconds: 10
+  # -- Period in seconds between liveness checks
+  periodSeconds: 10
+  # -- Timeout in seconds for liveness checks
+  timeoutSeconds: 5
+  # -- Number of consecutive negative tests before declaring failure
+  failureThreshold: 3
+  # -- Number of consecutive positive tests before counting it as a success
+  successThreshold: 1
+# Readiness probe settings
+readinessProbe:
+  # -- Initial delay before probing readiness
+  initialDelaySeconds: 10
+  # -- Period in seconds between readiness checks
+  periodSeconds: 10
+  # -- Timeout in seconds for readiness checks
+  timeoutSeconds: 5
+  # -- Number of consecutive negative tests before declaring failure
+  failureThreshold: 3
+  # -- Number of consecutive positive tests before counting it as a success
+  successThreshold: 1
+
 service:
   type: ClusterIP
   port: 8080
