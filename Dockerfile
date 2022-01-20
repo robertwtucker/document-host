@@ -3,6 +3,7 @@ WORKDIR /go/src/app
 # copy module files first so that they don't need to be downloaded again if no change
 COPY go.* .
 RUN go mod download
+RUN go mod vendor
 RUN go mod verify
 COPY . .
 # RUN make build
