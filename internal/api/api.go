@@ -7,19 +7,52 @@
 package api
 
 import (
-	"net/http"
-
-	"github.com/robertwtucker/document-host/internal/api/healthcheck"
 	"github.com/robertwtucker/document-host/internal/config"
+
+	// dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
+	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
 	"github.com/robertwtucker/document-host/pkg/log"
+	"github.com/robertwtucker/document-host/pkg/server"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"github.com/go-playground/validator/v10"
 )
 
-func Routing(cfg *config.Configuration, logger log.Logger) http.Handler {
-	logger.Debug("start: defining API routes")
+type App struct {
+	config     *config.Configuration
+	logger     log.Logger
+	validate   *validator.Validate
+
+	// documentUC document.UseCase
+}
+
+var validate *validator.Validate
+
+// func NewApp(cfg *config.Configuration, logger log.Logger) http.Handler {
+func NewApp(cfg *config.Configuration, logger log.Logger) *App {
+	validate = validator.New()
+	// TODO:
+	// db := initDB(cfg, logger)
+
+	logger.Debug("start: wiring App components")
+
+
+	logger.Debug("end: wiring App components")
+
+	return &App{
+		config:     cfg,
+		logger:     logger,
+		validate:   validate,
+
+		// documentUC:
+	}
+}
+
+func (a *App) Run() {
+
+	a.logger.Debug("start: configuring server")
 
 	// Chi setup
 	r := chi.NewRouter()
@@ -29,10 +62,26 @@ func Routing(cfg *config.Configuration, logger log.Logger) http.Handler {
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	// Register routes
-	healthcheck.RegisterHandlers(r)
+	// HTTP endpoints
+	health.RegisterHTTPHandlers(r)
 
-	logger.Debug("end: defining API routes")
+	// API endpoints
+	// r.Route("/v1", func(r chi.Router) {
+	// 	dochttp.RegisterHTTPHandlers(r, a.documentUC)
+	// })
 
-	return r
+	// Set up HTTP listener config
+	serverConfig := &server.Config{
+		Addr:                   a.config.Server.Addr,
+		ReadTimeoutSeconds:     a.config.Server.ReadTimeoutSeconds,
+		ShutdownTimeoutSeconds: a.config.Server.ShutdownTimeoutSeconds,
+		WriteTimeoutSeconds:    a.config.Server.WriteTimeoutSeconds,
+	}
+
+	a.logger.Debug("end: configuring server")
+
+	// Start server
+	if err := server.Start(*serverConfig, r, a.logger); err != nil {
+		a.logger.Errorf("server error: %s", err)
+	}
 }

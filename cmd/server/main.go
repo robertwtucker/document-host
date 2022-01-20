@@ -15,7 +15,6 @@ import (
 	"github.com/robertwtucker/document-host/internal/api"
 	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/pkg/log"
-	"github.com/robertwtucker/document-host/pkg/server"
 )
 
 // version is the application's current version
@@ -65,23 +64,13 @@ func run() error {
 		return err
 	}
 
-	// TODO: Set up DB connection
+	// Initialize the API app
+	app := api.NewApp(cfg, logger)
 
-	// Set up API handlers
-	r := api.Routing(cfg, logger)
+	// TODO: log the app's vitals
 
-	// Set up HTTP listener config
-	serverConfig := &server.Config{
-		Addr:                   cfg.Server.Addr,
-		ReadTimeoutSeconds:     cfg.Server.ReadTimeoutSeconds,
-		ShutdownTimeoutSeconds: cfg.Server.ShutdownTimeoutSeconds,
-		WriteTimeoutSeconds:    cfg.Server.WriteTimeoutSeconds,
-	}
-
-	// Start server
-	if err := server.Start(*serverConfig, r, logger); err != nil {
-		logger.Errorf("server error: %s", err)
-	}
+	// Run the app (server)
+	app.Run()
 
 	return nil
 }
