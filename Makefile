@@ -34,7 +34,7 @@ deps-reset:
 	go mod vendor
 
 tidy:
-	go mod tidy
+	go mod tidy -compat=1.17
 	go mod vendor
 
 deps-upgrade:
