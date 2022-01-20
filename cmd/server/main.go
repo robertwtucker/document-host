@@ -35,7 +35,7 @@ func initialize() (log.Logger, error) {
 
 	config.Init()
 
-	if debug := viper.GetBool("log.debug"); debug == true {
+	if debug := viper.GetBool("log.debug"); debug {
 		logger = log.NewDebug().With(context.Background(), "version", version)
 	} else {
 		logger = log.New().With(context.Background(), "version", version)
