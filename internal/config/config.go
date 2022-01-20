@@ -4,58 +4,41 @@
 // This file is subject to the terms and conditions defined in the
 // 'LICENSE' file found in the root of this source code package.
 //
+
 package config
 
 import (
-	"errors"
-	"io/ioutil"
+	"strings"
 
 	"github.com/robertwtucker/document-host/pkg/log"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/viper"
 )
 
-// ErrFileLoadFailed occurs when the specified config file cannot be read
-var ErrFileLoadFailed = errors.New("error loading configuration file")
+// Init sets up the Viper configuration
+func Init() {
+	viper.AutomaticEnv()
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config")
 
-// ErrFileDecodeFailed occurs when the config file is not formatted correctly
-var ErrFileDecodeFailed = errors.New("error decoding configuration file")
-
-// Configuration holds the app configuration settings
-type Configuration struct {
-	Server *Server   `yaml:"server,omitempty"`
-	DB     *Database `yaml:"database,omitempty"`
+	if env := viper.GetString("env"); strings.ToUpper(env) != "PROD" {
+		viper.Set("log.debug", true)
+	}
 }
 
-// Database holds the database configuration settings
-type Database struct {
-	URI string `yaml:"uri,omitempty" env:"DB_URI"`
-}
-
-// Server holds the HTTP server configuration settings
-type Server struct {
-	Addr                   string `yaml:"addr,omitempty" env:"SERVER_ADDR"`
-	ReadTimeoutSeconds     int    `yaml:"read_timeout_seconds,omitempty"`
-	ShutdownTimeoutSeconds int    `yaml:"shutdown_timeout_seconds,omitempty"`
-	WriteTimeoutSeconds    int    `yaml:"write_timeout_seconds,omitempty"`
-}
-
-// Load creates a Configuration given a properly formatted file
-func Load(file string, logger log.Logger) (*Configuration, error) {
-	logger.Infof("loading config file: %s", file)
-
-	bytes, err := ioutil.ReadFile(file)
+// Load attempts to read the app configuration file
+func Load(logger log.Logger) error {
+	logger.Debug("attempting to load config file")
+	err := viper.ReadInConfig()
 	if err != nil {
-		logger.Errorf("unable to load config file: %s", err)
-		return nil, ErrFileLoadFailed
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// No config file, will use env settings
+		} else {
+			logger.Errorf("error loading config file: %v \n", err)
+			return err
+		}
 	}
+	logger.Infof("config file '%s' used", viper.ConfigFileUsed())
 
-	var cfg = new(Configuration)
-	if err := yaml.Unmarshal(bytes, &cfg); err != nil {
-		logger.Errorf("unable to unmarshal config file: %s", err)
-		return nil, ErrFileDecodeFailed
-	}
-
-	// TODO: Look for ENV variable overrides
-
-	return cfg, nil
+	return nil
 }

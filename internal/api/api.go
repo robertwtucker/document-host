@@ -7,21 +7,19 @@
 package api
 
 import (
-	"github.com/robertwtucker/document-host/internal/config"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/render"
+	"github.com/go-playground/validator/v10"
+	"github.com/spf13/viper"
 
 	// dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
 	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
 	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/robertwtucker/document-host/pkg/server"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
-	"github.com/go-playground/validator/v10"
 )
 
 type App struct {
-	config     *config.Configuration
 	logger     log.Logger
 	validate   *validator.Validate
 
@@ -31,7 +29,7 @@ type App struct {
 var validate *validator.Validate
 
 // func NewApp(cfg *config.Configuration, logger log.Logger) http.Handler {
-func NewApp(cfg *config.Configuration, logger log.Logger) *App {
+func NewApp(logger log.Logger) *App {
 	validate = validator.New()
 	// TODO:
 	// db := initDB(cfg, logger)
@@ -42,7 +40,6 @@ func NewApp(cfg *config.Configuration, logger log.Logger) *App {
 	logger.Debug("end: wiring App components")
 
 	return &App{
-		config:     cfg,
 		logger:     logger,
 		validate:   validate,
 
@@ -72,10 +69,10 @@ func (a *App) Run() {
 
 	// Set up HTTP listener config
 	serverConfig := &server.Config{
-		Addr:                   a.config.Server.Addr,
-		ReadTimeoutSeconds:     a.config.Server.ReadTimeoutSeconds,
-		ShutdownTimeoutSeconds: a.config.Server.ShutdownTimeoutSeconds,
-		WriteTimeoutSeconds:    a.config.Server.WriteTimeoutSeconds,
+		Addr:                   viper.GetString("Server.Addr"),
+		ReadTimeoutSeconds:     viper.GetInt("Server.ReadTimeoutSeconds"),
+		ShutdownTimeoutSeconds: viper.GetInt("Server.ShutdownTimeoutSeconds"),
+		WriteTimeoutSeconds:    viper.GetInt("Server.WriteTimeoutSeconds"),
 	}
 
 	a.logger.Debug("end: configuring server")

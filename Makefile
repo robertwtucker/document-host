@@ -48,7 +48,7 @@ fmt:
 	@goimports -w -l $(GO_FILES)
 
 $(LINT_TOOL):
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.26.0
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.43.0
 
 qc: $(LINT_TOOL)
 	$(LINT_TOOL) run --config=.golangci.yaml ./...
