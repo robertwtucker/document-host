@@ -7,30 +7,41 @@
 package api
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/go-playground/validator/v10"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
 
 	// dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
 	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
 	"github.com/robertwtucker/document-host/pkg/log"
-	"github.com/robertwtucker/document-host/pkg/server"
 )
 
 type App struct {
 	logger     log.Logger
-	validate   *validator.Validate
 
 	// documentUC document.UseCase
 }
 
-var validate *validator.Validate
+type CustomValidator struct {
+	validator *validator.Validate
+}
 
-// func NewApp(cfg *config.Configuration, logger log.Logger) http.Handler {
+func (cv *CustomValidator) Validate(i interface{}) error {
+  if err := cv.validator.Struct(i); err != nil {
+    return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+  }
+  return nil
+}
+
 func NewApp(logger log.Logger) *App {
-	validate = validator.New()
 	// TODO:
 	// db := initDB(cfg, logger)
 
@@ -41,7 +52,6 @@ func NewApp(logger log.Logger) *App {
 
 	return &App{
 		logger:     logger,
-		validate:   validate,
 
 		// documentUC:
 	}
@@ -50,35 +60,46 @@ func NewApp(logger log.Logger) *App {
 func (a *App) Run() {
 
 	a.logger.Debug("start: configuring server")
+	timeout := viper.GetInt("server.timeout")
 
-	// Chi setup
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.URLFormat)
-	r.Use(render.SetContentType(render.ContentTypeJSON))
+	// Echo setup
+	e := echo.New()
+	e.Use(middleware.RequestID())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Validator = &CustomValidator{validator: validator.New()}
+	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
+		Timeout: time.Duration(timeout) * time.Second,
+	}))
 
 	// HTTP endpoints
-	health.RegisterHTTPHandlers(r)
+	health.RegisterHTTPHandlers(e)
 
 	// API endpoints
 	// r.Route("/v1", func(r chi.Router) {
 	// 	dochttp.RegisterHTTPHandlers(r, a.documentUC)
 	// })
 
-	// Set up HTTP listener config
-	serverConfig := &server.Config{
-		Addr:                   viper.GetString("Server.Addr"),
-		ReadTimeoutSeconds:     viper.GetInt("Server.ReadTimeoutSeconds"),
-		ShutdownTimeoutSeconds: viper.GetInt("Server.ShutdownTimeoutSeconds"),
-		WriteTimeoutSeconds:    viper.GetInt("Server.WriteTimeoutSeconds"),
-	}
-
 	a.logger.Debug("end: configuring server")
 
 	// Start server
-	if err := server.Start(*serverConfig, r, a.logger); err != nil {
-		a.logger.Errorf("server error: %s", err)
+	go func() {
+		a.logger.Debug("starting server")
+		err := e.Start(":" + viper.GetString("server.port"))
+		if err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatalf("shutting down the server: %+v", err)
+		}
+	}()
+
+	// Channel for signal interrupts
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)
+	<-sigint
+	// Interrupt received, attempt to shudtown gracefully
+	ctx, cancel := context.WithTimeout(
+		context.Background(), time.Duration(timeout)*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
 	}
 }

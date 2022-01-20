@@ -8,14 +8,13 @@ package http
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/render"
+	"github.com/labstack/echo/v4"
 )
 
-func RegisterHTTPHandlers(r chi.Router) {
-	r.Get("/health", HealthCheckHandler)
+func RegisterHTTPHandlers(e *echo.Echo) {
+	e.GET("/health", healthCheckHandler)
 }
 
-func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	render.Status(r, http.StatusOK)
+func healthCheckHandler(c echo.Context) error {
+	return c.String(http.StatusOK, "OK")
 }
