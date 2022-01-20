@@ -10,7 +10,6 @@ import (
 	"net/http"
 
 	"github.com/robertwtucker/document-host/internal/api/healthcheck"
-	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/pkg/log"
 
 	"github.com/go-chi/chi/v5"
@@ -18,7 +17,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func Routing(cfg *config.Configuration, logger log.Logger) http.Handler {
+func Routing(logger log.Logger) http.Handler {
 	logger.Debug("start: defining API routes")
 
 	// Chi setup
