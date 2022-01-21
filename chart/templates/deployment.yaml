@@ -33,6 +33,18 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "docuhost.env.database" . | nindent 12 }}
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "docuhost.configMapName" . }}
+                  key: server-port
+            - name: SERVER_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "docuhost.configMapName" . }}
+                  key: server-timeout
           ports:
             - name: http
               containerPort: {{ .Values.containerPort }}

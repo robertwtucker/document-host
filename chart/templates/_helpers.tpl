@@ -60,3 +60,93 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Return true if a secret object should be created
+*/}}
+{{- define "docuhost.createSecret" }}
+{{- if not (include "docuhost.useExistingSecret" .) }}
+    {{- true }}
+{{- end }}
+{{- end }}
+
+{{/*
+Get the password secret.
+*/}}
+{{- define "docuhost.secretName" }}
+{{- if .Values.existingSecret }}
+    {{- printf "%s" (tpl .Values.existingSecret $) }}
+{{- else }}
+    {{- printf "%s" (include "docuhost.fullname" .) }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return true if we should use an existingSecret.
+*/}}
+{{- define "docuhost.useExistingSecret" }}
+{{- if .Values.existingSecret }}
+    {{- true }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return the configuration configmap name
+*/}}
+{{- define "docuhost.configMapName" }}
+{{- if .Values.existingConfigMap }}
+    {{- printf "%s" (tpl .Values.existingConfigMap $) }}
+{{- else }}
+    {{- printf "%s-configuration" (include "docuhost.fullname" .)  }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return true if a configmap object should be created
+*/}}
+{{- define "docuhost.createConfigMap" }}
+{{- if empty .Values.existingConfigmap }}
+    {{- true }}
+{{- end }}
+{{- end }}
+
+{{/*
+Return the DocuHost database environment settings
+*/}}
+{{- define "docuhost.env.database" -}}
+- name: DB_PREFIX
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "docuhost.configMapName" . }}
+      key: db-prefix
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "docuhost.secretName" . }}
+      key: db-username
+- name: DB_PASS
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "docuhost.secretName" . }}
+      key: db-password
+- name: DB_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "docuhost.configMapName" . }}
+      key: db-host
+- name: DB_PORT
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "docuhost.configMapName" . }}
+      key: db-port
+- name: DB_NAME
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "docuhost.configMapName" . }}
+      key: db-name
+- name: DB_COLLECTION
+  valueFrom:
+    configMapKeyRef:
+      name: {{ include "docuhost.configMapName" . }}
+      key: db-collection
+{{- end }}
