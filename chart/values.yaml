@@ -42,6 +42,12 @@ db:
   name: "docuhost"
   # -- Database collection
   collection: "fs.files"
+  # -- Database connection timeout (seconds)
+  timeout: 3
+# Log configuration
+log:
+  # -- Use debug log settings
+  debug: false
 # -- Partially override the name used for chart objects
 nameOverride: ""
 # -- Fully override the name used for chart objects
