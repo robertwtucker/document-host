@@ -1,5 +1,7 @@
 mongo:
   uri: 'mongodb://localhost:27017'
+  database: documents
+  timeout: 5
 server:
   port: 8080
   timeout: 20
