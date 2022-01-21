@@ -60,7 +60,7 @@ func NewApp(logger log.Logger) *App {
 	logger.Debug("mongo database connection initialized")
 
 	// Inject the DB into the repo
-	documentRepo := docrepo.NewDocumentRepository(db, "fs.files")
+	documentRepo := docrepo.NewDocumentRepository(db, viper.GetString("db.collection"))
 
 	logger.Debug("end: wiring App components")
 	return &App{
@@ -125,13 +125,13 @@ func (a *App) Run() {
 
 // initDB sets up the MongoDB client and establishes the DB connection
 func initDB() *mongo.Database {
-	client, err := mongo.NewClient(options.Client().ApplyURI(viper.GetString("mongo.uri")))
+	client, err := mongo.NewClient(options.Client().ApplyURI(viper.GetString("db.uri")))
 	if err != nil {
 		logpkg.Fatalf("Error occured while establishing connection to mongoDB")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(),
-		time.Duration(viper.GetInt("mongo.timeout"))*time.Second)
+		time.Duration(viper.GetInt("db.timeout"))*time.Second)
 	defer cancel()
 
 	err = client.Connect(ctx)
@@ -144,5 +144,5 @@ func initDB() *mongo.Database {
 		logpkg.Fatal(err)
 	}
 
-	return client.Database(viper.GetString("mongo.database"))
+	return client.Database(viper.GetString(viper.GetString("db.name")))
 }

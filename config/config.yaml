@@ -1,7 +1,13 @@
-mongo:
+db:
   uri: 'mongodb://localhost:27017'
-  database: documents
+  prefix: mongodb://
+  user: ""
+  password: ""
+  name: documents
+  collection: fs.files
   timeout: 5
 server:
   port: 8080
   timeout: 20
+log:
+  debug: false

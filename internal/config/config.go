@@ -8,8 +8,6 @@
 package config
 
 import (
-	"strings"
-
 	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/spf13/viper"
 )
@@ -20,10 +18,6 @@ func Init() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./config")
-
-	if env := viper.GetString("env"); strings.ToUpper(env) != "PROD" {
-		viper.Set("log.debug", true)
-	}
 }
 
 // Load attempts to read the app configuration file
