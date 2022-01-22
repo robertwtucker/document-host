@@ -6,7 +6,6 @@ require (
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.3
-	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.10.1
 	go.mongodb.org/mongo-driver v1.8.2
 	go.uber.org/zap v1.20.0
@@ -28,6 +27,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

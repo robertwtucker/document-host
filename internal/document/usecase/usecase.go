@@ -28,10 +28,22 @@ func NewDocumentUseCase(documentRepo document.Repository) *DocumentUseCase {
 
 // Create implements the use case interface
 func (d DocumentUseCase) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
-	return d.documentRepo.Create(ctx, doc)
+	aDoc, err := d.documentRepo.Create(ctx, doc)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: Implement short link service call
+	/*
+		aDoc.URL = strings.sprintf(%s/%s, viper.GetString("app.url"), doc.ID)
+		shortLink, err := url.shorten(doc.URL)
+		if err != nil {
+			return nil, err
+		}
+	*/
+	return aDoc, nil
 }
 
 // Get implements the use case interface
-func (d DocumentUseCase) Get(ctx context.Context, id string) (*model.Document, error) {
+func (d DocumentUseCase) Get(ctx context.Context, id string) (*model.File, error) {
 	return d.documentRepo.Get(ctx, id)
 }

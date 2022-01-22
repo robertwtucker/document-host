@@ -16,5 +16,5 @@ import (
 // UseCase defines the operations supported by the document resource
 type UseCase interface {
 	Create(ctx context.Context, doc *model.Document) (*model.Document, error)
-	Get(ctx context.Context, id string) (*model.Document, error)
+	Get(ctx context.Context, id string) (*model.File, error)
 }

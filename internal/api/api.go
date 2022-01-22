@@ -60,7 +60,7 @@ func NewApp(logger log.Logger) *App {
 	logger.Debug("mongo database connection initialized")
 
 	// Inject the DB into the repo
-	documentRepo := docrepo.NewDocumentRepository(db, viper.GetString("db.collection"))
+	documentRepo := docrepo.NewDocumentRepository(db)
 
 	logger.Debug("end: wiring App components")
 	return &App{
@@ -144,5 +144,5 @@ func initDB() *mongo.Database {
 		logpkg.Fatal(err)
 	}
 
-	return client.Database(viper.GetString(viper.GetString("db.name")))
+	return client.Database(viper.GetString("db.name"))
 }
