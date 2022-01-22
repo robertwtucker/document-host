@@ -11,7 +11,6 @@ data:
   db-host: {{ required "A value for 'db.host' is required." .Values.db.host | quote }}
   db-port: {{ required "A value for 'db.port' is required." .Values.db.port | quote }}
   db-name: {{ required "A value for 'db.name' is required." .Values.db.name | quote }}
-  db-collection: {{ required "A value for 'db.collection' is required." .Values.db.collection | quote }}
   db-timeout: {{ required "A value for 'db.timeout' is required." .Values.db.timeout | quote }}
   server-port: {{ required "A value for 'server.port' is required." .Values.server.port | quote }}
   server-timeout: {{ required "A value for 'server.timeout' is required." .Values.server.timeout | quote }}

@@ -144,11 +144,6 @@ Return the DocuHost database environment settings
     configMapKeyRef:
       name: {{ include "docuhost.configMapName" . }}
       key: db-name
-- name: DB_COLLECTION
-  valueFrom:
-    configMapKeyRef:
-      name: {{ include "docuhost.configMapName" . }}
-      key: db-collection
 - name: DB_TIMEOUT
   valueFrom:
     configMapKeyRef:

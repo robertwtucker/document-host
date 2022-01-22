@@ -40,10 +40,8 @@ db:
   port: 27017
   # -- Database name
   name: "docuhost"
-  # -- Database collection
-  collection: "fs.files"
   # -- Database connection timeout (seconds)
-  timeout: 3
+  timeout: 10
 # Log configuration
 log:
   # -- Use debug log settings
