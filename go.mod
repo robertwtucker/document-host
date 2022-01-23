@@ -3,6 +3,7 @@ module github.com/robertwtucker/document-host
 go 1.17
 
 require (
+	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.6.3

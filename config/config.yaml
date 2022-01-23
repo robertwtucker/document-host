@@ -1,13 +1,18 @@
+app:
+  url: http://dev.local/v1/documents
 db:
-  uri: 'mongodb://localhost:27017'
-  prefix: mongodb://
-  user: ""
-  password: ""
+  prefix: mongodb
+  user: ${DB_USER}
+  password: $[DB_PASSWORD]
+  host: localhost
+  port: 27017
   name: documents
-  collection: fs.files
-  timeout: 5
+  timeout: 10
 server:
   port: 8080
   timeout: 20
 log:
   debug: false
+shortlink:
+  apikey: ${SHORTLINK_APIKEY}
+  domain: tiny.one

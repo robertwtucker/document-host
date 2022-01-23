@@ -19,7 +19,7 @@ import (
 )
 
 // version is the application's current version
-const version = "0.1.0"
+const version = "0.2.0"
 
 // main entry point
 func main() {
@@ -30,7 +30,7 @@ func main() {
 }
 
 // initialize sets up the application configuration and logging
-func initialize() (log.Logger, error) {
+func initialize() (*config.Configuration, log.Logger, error) {
 	var logger log.Logger
 
 	config.Init()
@@ -41,26 +41,26 @@ func initialize() (log.Logger, error) {
 		logger = log.New().With(context.Background(), "version", version)
 	}
 
-	if err := config.Load(logger); err != nil {
-		return nil, err
+	cfg, err := config.Load(logger)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	return logger, nil
+	return cfg, logger, nil
 }
 
 // run creates app commpoennts and executes the application
 func run() error {
 	// Set up configuration and logging
-	logger, err := initialize()
+	cfg, logger, err := initialize()
 	if err != nil {
 		logpkg.Printf("failed to initialize app: %v \n", err)
 		return err
 	}
+	logger.Debug("configuration:", cfg)
 
 	// Initialize the API app
-	app := api.NewApp(logger)
-
-	// TODO: log the app's vitals
+	app := api.NewApp(cfg, logger)
 
 	// Run the app (server)
 	app.Run()

@@ -9,38 +9,41 @@ package usecase
 
 import (
 	"context"
-
+	"fmt"
 	"github.com/robertwtucker/document-host/internal/document"
 	"github.com/robertwtucker/document-host/pkg/model"
+	"github.com/robertwtucker/document-host/pkg/shortlink"
+	"github.com/spf13/viper"
 )
 
 // DocumentUseCase is the concrete implementation the use cases for the document repository
 type DocumentUseCase struct {
 	documentRepo document.Repository
+	shortLinkSvc shortlink.Service
 }
 
 // NewDocumentUseCase creates a new instance of the `DocumentUseCase`
-func NewDocumentUseCase(documentRepo document.Repository) *DocumentUseCase {
+func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink.Service) *DocumentUseCase {
 	return &DocumentUseCase{
 		documentRepo: documentRepo,
+		shortLinkSvc: shortLinkSvc,
 	}
 }
 
 // Create implements the use case interface
 func (d DocumentUseCase) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
-	aDoc, err := d.documentRepo.Create(ctx, doc)
+	doc, err := d.documentRepo.Create(ctx, doc)
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Implement short link service call
-	/*
-		aDoc.URL = strings.sprintf(%s/%s, viper.GetString("app.url"), doc.ID)
-		shortLink, err := url.shorten(doc.URL)
-		if err != nil {
-			return nil, err
-		}
-	*/
-	return aDoc, nil
+
+	doc.URL = fmt.Sprintf("%s/%s", viper.GetString("app.url"), doc.ID)
+	slRequest := &shortlink.ServiceRequest{URL: doc.URL}
+	if slResponse := d.shortLinkSvc.Shorten(ctx, slRequest); slResponse != nil {
+		doc.ShortLink = slResponse.ShortLink
+	}
+
+	return doc, nil
 }
 
 // Get implements the use case interface

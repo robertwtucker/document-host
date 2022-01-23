@@ -9,7 +9,7 @@ package api
 
 import (
 	"context"
-	"github.com/robertwtucker/document-host/internal/document"
+	"fmt"
 	logpkg "log"
 	"net/http"
 	"os"
@@ -20,19 +20,22 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"github.com/robertwtucker/document-host/internal/config"
+	"github.com/robertwtucker/document-host/internal/document"
 	docrepo "github.com/robertwtucker/document-host/internal/document/repository/mongo"
 	dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
 	"github.com/robertwtucker/document-host/internal/document/usecase"
 	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
 	"github.com/robertwtucker/document-host/pkg/log"
+	"github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
 )
 
 // App hods the singletons and use cases
 type App struct {
+	config     *config.Configuration
 	logger     log.Logger
 	db         *mongo.Database
 	documentUC document.UseCase
@@ -52,29 +55,31 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 // NewApp initializes and returns an App instance
-func NewApp(logger log.Logger) *App {
+func NewApp(cfg *config.Configuration, logger log.Logger) *App {
 	logger.Debug("start: wiring App components")
 
 	// Initialize MongoDB
-	db := initDB()
+	db := initDB(cfg)
 	logger.Debug("mongo database connection initialized")
 
 	// Inject the DB into the repo
 	documentRepo := docrepo.NewDocumentRepository(db)
 
+	// Initialize the short link generation service
+	shortLinkSvc := tinyurl.NewTinyURLService(cfg.ShortLink.APIKey, cfg.ShortLink.Domain)
 	logger.Debug("end: wiring App components")
+
 	return &App{
 		logger:     logger,
+		config:     cfg,
 		db:         db,
-		documentUC: usecase.NewDocumentUseCase(documentRepo),
+		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc),
 	}
 }
 
 // Run does the heavy-lifting for the App
 func (a *App) Run() {
-
 	a.logger.Debug("start: configure server")
-	timeout := viper.GetInt("server.timeout")
 
 	// Echo setup
 	e := echo.New()
@@ -82,7 +87,7 @@ func (a *App) Run() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.TimeoutWithConfig(middleware.TimeoutConfig{
-		Timeout: time.Duration(timeout) * time.Second,
+		Timeout: time.Duration(a.config.Server.Timeout) * time.Second,
 	}))
 	e.Validator = &CustomValidator{validator: validator.New()}
 
@@ -101,10 +106,10 @@ func (a *App) Run() {
 	dochttp.RegisterHTTPHandlers(e, a.documentUC)
 	a.logger.Debug("end: configuring server")
 
-	// Start server
+	// Start server using goroutine
 	go func() {
 		a.logger.Debug("starting server")
-		err := e.Start(":" + viper.GetString("server.port"))
+		err := e.Start(":" + a.config.Server.Port)
 		if err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatalf("shutting down the server: %+v", err)
 		}
@@ -116,7 +121,7 @@ func (a *App) Run() {
 	<-sigint
 	// Interrupt received, try to shut down gracefully
 	ctx, cancel := context.WithTimeout(
-		context.Background(), time.Duration(timeout)*time.Second)
+		context.Background(), time.Duration(a.config.Server.Timeout)*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
@@ -124,14 +129,15 @@ func (a *App) Run() {
 }
 
 // initDB sets up the MongoDB client and establishes the DB connection
-func initDB() *mongo.Database {
-	client, err := mongo.NewClient(options.Client().ApplyURI(viper.GetString("db.uri")))
+func initDB(cfg *config.Configuration) *mongo.Database {
+	uri := fmt.Sprintf("%s://%s:%s", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		logpkg.Fatalf("Error occured while establishing connection to mongoDB")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(),
-		time.Duration(viper.GetInt("db.timeout"))*time.Second)
+		time.Duration(cfg.DB.Timeout)*time.Second)
 	defer cancel()
 
 	err = client.Connect(ctx)
@@ -144,5 +150,5 @@ func initDB() *mongo.Database {
 		logpkg.Fatal(err)
 	}
 
-	return client.Database(viper.GetString("db.name"))
+	return client.Database(cfg.DB.Name)
 }
