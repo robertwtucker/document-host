@@ -20,6 +20,10 @@ image:
 # imagePullSecrets:
 #   - name: myRegistryKeySecretName
 imagePullSecrets: []
+# App configuration
+app:
+  # -- Fully-qualified URL to the documents resource (gets prepend to document ID)
+  url: http://localhost/v1/documents
 # Server configuration
 server:
   # -- Port to listen on (must match containerPort)
@@ -29,23 +33,29 @@ server:
 # Database configuration
 db:
   # -- Database prefix (identifies standard connection format for URI creation)
-  prefix: "mongodb://"
+  prefix: mongodb
   # -- Database user
   username: ""
   # -- Database password
   password: ""
   # -- Database host
-  host: ""
+  host: localhost
   # -- Database port
   port: 27017
   # -- Database name
-  name: "docuhost"
+  name: docuhost
   # -- Database connection timeout (seconds)
   timeout: 10
 # Log configuration
 log:
   # -- Use debug log settings
   debug: false
+# Short Link generation service configuration
+shortlink:
+  # -- API Key to use for authorization
+  apikey: ""
+  # -- Domain name to use for short links
+  domain: tiny.one
 # -- Partially override the name used for chart objects
 nameOverride: ""
 # -- Fully override the name used for chart objects
