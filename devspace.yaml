@@ -46,6 +46,8 @@ deployments:
       values:
         auth:
           enabled: false
+        image:
+          tag: 4.4.12-debian-10-r2
 
 # `dev` only applies when you run `devspace dev`
 dev:
