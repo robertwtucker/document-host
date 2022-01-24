@@ -3,6 +3,7 @@
 // This file is subject to the terms and conditions defined in the
 // 'LICENSE' file found in the root of this source code package.
 //
+
 package http
 
 import (
@@ -11,6 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// RegisterHTTPHandlers maps the handler for the health check endpoint
 func RegisterHTTPHandlers(e *echo.Echo) {
 	e.GET("/health", healthCheckHandler)
 }

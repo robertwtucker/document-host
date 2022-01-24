@@ -54,10 +54,6 @@ type tinyURLServiceResponse struct {
 
 // Shorten implements the Short Link generation service interface
 func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
 		"domain": ts.Domain,

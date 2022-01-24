@@ -10,8 +10,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/robertwtucker/document-host/pkg/log"
+
 	"github.com/spf13/viper"
+
+	"github.com/robertwtucker/document-host/pkg/log"
 )
 
 // Configuration represents the application configuration settings

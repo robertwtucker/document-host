@@ -10,10 +10,12 @@ package usecase
 import (
 	"context"
 	"fmt"
+
+	"github.com/spf13/viper"
+
 	"github.com/robertwtucker/document-host/internal/document"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
-	"github.com/spf13/viper"
 )
 
 // DocumentUseCase is the concrete implementation the use cases for the document repository

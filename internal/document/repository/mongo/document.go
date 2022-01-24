@@ -11,12 +11,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"strings"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"strings"
 
 	"github.com/robertwtucker/document-host/pkg/model"
 )
@@ -33,10 +34,6 @@ func NewDocumentRepository(db *mongo.Database) *DocumentRepository {
 
 // Create implements the use case interface
 func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
 	// Decode and store the file
 	bucket, _ := gridfs.NewBucket(d.db)
 	var decoder = base64.NewDecoder(base64.StdEncoding, strings.NewReader(doc.FileBase64))

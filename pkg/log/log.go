@@ -4,6 +4,7 @@
 // This file is subject to the terms and conditions defined in the
 // 'LICENSE' file found in the root of this source code package.
 //
+
 package log
 
 import (
@@ -53,7 +54,7 @@ func New() Logger {
 	return NewWithZap(l)
 }
 
-// New creates a new logger using the debug configuration.
+// NewDebug creates a new logger using the debug configuration.
 func NewDebug() Logger {
 	l, _ := zap.NewDevelopment()
 	return NewWithZap(l)
