@@ -130,24 +130,26 @@ func (a *App) Run() {
 
 // initDB sets up the MongoDB client and establishes the DB connection
 func initDB(cfg *config.Configuration) *mongo.Database {
-	uri := fmt.Sprintf("%s://%s:%s", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
-		logpkg.Fatalf("Error occured while establishing connection to mongoDB")
+	credential := options.Credential{
+		AuthSource: cfg.DB.Name,
+		Username:   cfg.DB.User,
+		Password:   cfg.DB.Password,
 	}
+	uri := fmt.Sprintf("%s://%s:%s", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(credential))
+	if err != nil {
+		logpkg.Fatalf("error connecting to mongodb: %+v", err)
+	}
+	defer client.Disconnect(context.Background())
 
+	// Set a timeout for blocking functions
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Duration(cfg.DB.Timeout)*time.Second)
 	defer cancel()
 
 	err = client.Connect(ctx)
 	if err != nil {
-		logpkg.Fatal(err)
-	}
-
-	err = client.Ping(context.Background(), nil)
-	if err != nil {
-		logpkg.Fatal(err)
+		logpkg.Fatalf("error setting timeout context: %+v", err)
 	}
 
 	return client.Database(cfg.DB.Name)
