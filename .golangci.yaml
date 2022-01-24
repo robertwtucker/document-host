@@ -43,4 +43,3 @@ issues:
     - G104
     - exported func * returns unexported type *, which can be annoying to use
     - should have a package comment, unless it's in another file for this package
-    - package comment should be of the form
