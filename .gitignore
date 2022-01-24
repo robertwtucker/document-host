@@ -3,8 +3,8 @@
 .idea
 *.test
 *.out
+chart
 vendor
-
 
 # Ignore DevSpace cache and log folder
 .devspace/
