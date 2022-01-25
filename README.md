@@ -26,6 +26,33 @@ $ helm upgrade --install docuhost ./docuhost --namespace=demo-prod \
 
 These commands deploy Docuhost to the Kubernetes cluster in the `demo-prod` namespace. The parameters for the database username and password are set to `admin` and `s3cr3t`, respectively. See the [Parameters](https://github.com/robertwtucker/spt-charts/tree/master/docuhost#parameters) section of the [README](https://github.com/robertwtucker/spt-charts/tree/master/docuhost) for a list of the parameters that can/need to be configured for a successful installation.
 
+### Usage
+
+A sample request and response are provided below.
+
+#### Sample Request
+
+``` json
+HTTP POST /v1/documents
+{
+  "filename": "simple.pdf",
+  "contentType": "application/pdf",
+  "fileBase64": "JVBERi0xLjc[...]zd="
+}
+```
+
+#### Sample Response
+
+``` json
+{
+  "id": "61f0023ee260d827b7156c55",
+  "filename": "simple.pdf",
+  "contentType": "application/pdf",
+  "url": "http://docuhost.localdev/v1/documents/61f0023ee260d827b7156c55",
+  "shortLink": "https://tiny.one/yckaxkhv"
+}
+```
+
 ## Roadmap
 
 See the [open issues](https://github.com/robertwtucker/document-host/issues) for a list of proposed features (and known issues).
