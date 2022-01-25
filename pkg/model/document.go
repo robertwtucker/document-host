@@ -12,7 +12,7 @@ type Document struct {
 	ID          string `json:"id,omitempty"`
 	Filename    string `json:"filename" validate:"required"`
 	ContentType string `json:"contentType" validate:"required"`
-	FileBase64  string `json:"fileBase64" validate:"required"`
+	FileBase64  string `json:"fileBase64,omitempty" validate:"required"`
 	URL         string `json:"url,omitempty"`
 	ShortLink   string `json:"shortLink,omitempty"`
 }
