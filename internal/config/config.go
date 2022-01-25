@@ -26,7 +26,7 @@ type Configuration struct {
 		User     string `mapstructure:"user"`
 		Password string `mapstructure:"password"`
 		Host     string `mapstructure:"host"`
-		Port     string `mapstructure:"port"`
+		Port     int64  `mapstructure:"port"`
 		Name     string `mapstructure:"name"`
 		Timeout  int64  `mapstructure:"timeout"`
 	} `mapstructure:"db"`
