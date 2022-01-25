@@ -64,7 +64,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("error initializing db: %v", err))
 	}
-	logger.Debug("db connection initialized")
+	logger.Debugf("connection to %s db initialized", db.Name())
 
 	// Inject the DB into the repo
 	documentRepo := docrepo.NewDocumentRepository(db)
@@ -112,7 +112,7 @@ func (a *App) Run() {
 
 	// Start server using goroutine
 	go func() {
-		a.logger.Debug("starting server")
+		a.logger.Debug("starting the server")
 		err := e.Start(":" + a.config.Server.Port)
 		if err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatalf("shutting down the server: %+v", err)
@@ -140,7 +140,6 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 	if authUser = cfg.DB.User; strings.ToLower(authUser) != "root" {
 		authSource = cfg.DB.Name
 	}
-	logger.Debugf("setting db credentials for %s.%s", authSource, authUser)
 	credential := options.Credential{
 		AuthSource: authSource,
 		Username:   authUser,
@@ -149,27 +148,23 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 
 	// Client configuration
 	uri := fmt.Sprintf("%s://%s:%d", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
-	logger.Debugf("creating db client: %s", uri)
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(credential))
+	logger.Debugf("creating db client for %s.%s@%s:%d",
+		authSource, authUser, cfg.DB.Host, cfg.DB.Port)
+	opts := options.Client().ApplyURI(uri).SetAuth(credential)
+	client, err := mongo.NewClient(opts)
 	if err != nil {
 		logger.Errorf("error creating db client: %+v", err)
 		return nil, err
 	}
-	defer func(client *mongo.Client, ctx context.Context) {
-		err := client.Disconnect(ctx)
-		if err != nil {
-			logger.Errorf("caught error disconnecting db client: %+v", err)
-		}
-	}(client, context.Background())
 
 	// Set a timeout for blocking functions
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Duration(cfg.DB.Timeout)*time.Second)
 	defer cancel()
 
-	err = client.Connect(ctx)
-	if err != nil {
-		logger.Errorf("error setting timeout context: %+v", err)
+	// Create connection using the timeout context
+	if err := client.Connect(ctx); err != nil {
+		logger.Errorf("error connecting client: %+v", err)
 		return nil, err
 	}
 
