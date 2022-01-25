@@ -9,8 +9,8 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	logpkg "log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -55,12 +55,15 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 // NewApp initializes and returns an App instance
-func NewApp(cfg *config.Configuration, logger log.Logger) *App {
+func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 	logger.Debug("start: wiring App components")
 
 	// Initialize MongoDB
-	db := initDB(cfg)
-	logger.Debug("mongo database connection initialized")
+	db, err := initDB(cfg, logger)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("error initializing db: %v", err))
+	}
+	logger.Debug("db connection initialized")
 
 	// Inject the DB into the repo
 	documentRepo := docrepo.NewDocumentRepository(db)
@@ -74,7 +77,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) *App {
 		config:     cfg,
 		db:         db,
 		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc),
-	}
+	}, nil
 }
 
 // Run does the heavy-lifting for the App
@@ -129,7 +132,7 @@ func (a *App) Run() {
 }
 
 // initDB sets up the MongoDB client and establishes the DB connection
-func initDB(cfg *config.Configuration) *mongo.Database {
+func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, error) {
 	credential := options.Credential{
 		AuthSource: cfg.DB.Name,
 		Username:   cfg.DB.User,
@@ -137,8 +140,10 @@ func initDB(cfg *config.Configuration) *mongo.Database {
 	}
 	uri := fmt.Sprintf("%s://%s:%s", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(credential))
+	logger.Debugf("creating connection to %s", uri)
 	if err != nil {
-		logpkg.Fatalf("error connecting to mongodb: %+v", err)
+		logger.Errorf("error creating db client: %+v", err)
+		return nil, err
 	}
 	defer client.Disconnect(context.Background())
 
@@ -149,8 +154,16 @@ func initDB(cfg *config.Configuration) *mongo.Database {
 
 	err = client.Connect(ctx)
 	if err != nil {
-		logpkg.Fatalf("error setting timeout context: %+v", err)
+		logger.Errorf("error setting timeout context: %+v", err)
+		return nil, err
 	}
 
-	return client.Database(cfg.DB.Name)
+	logger.Debug("pinging db server")
+	err = client.Ping(context.Background(), nil)
+	if err != nil {
+		logger.Errorf("error connecting to db: %+v", err)
+		return nil, err
+	}
+
+	return client.Database(cfg.DB.Name), nil
 }

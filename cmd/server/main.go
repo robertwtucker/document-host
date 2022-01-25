@@ -60,7 +60,11 @@ func run() error {
 	logger.Debug("configuration:", cfg)
 
 	// Initialize the API app
-	app := api.NewApp(cfg, logger)
+	app, err := api.NewApp(cfg, logger)
+	if err != nil {
+		logger.Errorf("error initializing app: %v", err)
+		return err
+	}
 
 	// Run the app (server)
 	app.Run()
