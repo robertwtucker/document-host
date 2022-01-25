@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -56,7 +57,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 // NewApp initializes and returns an App instance
 func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
-	logger.Debug("start: wiring App components")
+	logger.Debug("start: wiring app components")
 
 	// Initialize MongoDB
 	db, err := initDB(cfg, logger)
@@ -70,7 +71,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 
 	// Initialize the short link generation service
 	shortLinkSvc := tinyurl.NewTinyURLService(cfg.ShortLink.APIKey, cfg.ShortLink.Domain)
-	logger.Debug("end: wiring App components")
+	logger.Debug("end: wiring app components")
 
 	return &App{
 		logger:     logger,
@@ -82,7 +83,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 
 // Run does the heavy-lifting for the App
 func (a *App) Run() {
-	a.logger.Debug("start: configure server")
+	a.logger.Debug("start: configuring server")
 
 	// Echo setup
 	e := echo.New()
@@ -133,19 +134,33 @@ func (a *App) Run() {
 
 // initDB sets up the MongoDB client and establishes the DB connection
 func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, error) {
+	// User configuration
+	var authUser string
+	var authSource = "admin"
+	if authUser = cfg.DB.User; strings.ToLower(authUser) != "root" {
+		authSource = cfg.DB.Name
+	}
+	logger.Debugf("setting db credentials for %s.%s", authSource, authUser)
 	credential := options.Credential{
-		AuthSource: cfg.DB.Name,
-		Username:   cfg.DB.User,
+		AuthSource: authSource,
+		Username:   authUser,
 		Password:   cfg.DB.Password,
 	}
-	uri := fmt.Sprintf("%s://%s:%s", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
+
+	// Client configuration
+	uri := fmt.Sprintf("%s://%s:%d", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
+	logger.Debugf("creating db client: %s", uri)
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(credential))
-	logger.Debugf("creating connection to %s", uri)
 	if err != nil {
 		logger.Errorf("error creating db client: %+v", err)
 		return nil, err
 	}
-	defer client.Disconnect(context.Background())
+	defer func(client *mongo.Client, ctx context.Context) {
+		err := client.Disconnect(ctx)
+		if err != nil {
+			logger.Errorf("caught error disconnecting db client: %+v", err)
+		}
+	}(client, context.Background())
 
 	// Set a timeout for blocking functions
 	ctx, cancel := context.WithTimeout(context.Background(),
@@ -158,8 +173,8 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 		return nil, err
 	}
 
-	logger.Debug("pinging db server")
-	err = client.Ping(context.Background(), nil)
+	logger.Debug("validating connection to db (ping)")
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		logger.Errorf("error connecting to db: %+v", err)
 		return nil, err
