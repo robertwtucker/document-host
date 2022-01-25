@@ -19,7 +19,7 @@ import (
 )
 
 // version is the application's current version
-const version = "0.2.0"
+const version = "0.2.1"
 
 // main entry point
 func main() {

@@ -5,7 +5,7 @@ vars:
   - name: IMAGE
     value: registry.sptcloud.com/spt/docuhost
   - name: VERSION
-    value: 0.2.0
+    value: 0.2.1
 
 # `images` specifies the images bo be built with the build command
 images:
@@ -27,7 +27,7 @@ deployments:
     helm:
       # We are deploying this project with the Helm chart you provided
       chart:
-        name: ./chart/docuhost-0.1.3.tgz
+        name: ./chart/docuhost-0.1.4.tgz
       replaceImageTags: false
       # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
       # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
