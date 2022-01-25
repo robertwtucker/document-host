@@ -1,10 +1,30 @@
 # Document Host
 
-This service will provide a REST API for temporarily storing documents for demos.
+The Document Host (Docuhost) service provides a REST endpoint to upload demo-generated documents for temporary storage. Documents can be retrieved via the short link returned in the upload response.
 
 ## Getting Started
 
-_\[TBD\]_
+### Prerequisites
+
+* Kubernetes 1.21+
+* Helm 3.1+
+* MongoDB 4.4+
+
+The application is designed to be installed in [Kubernetes](https://kubernetes.io) using a [Helm](https://helm.sh) chart. Files are stored in [MongoDB](https://www.mongodb.com) using [GridFS](https://docs.mongodb.com/v4.4/core/gridfs) so, prior to deployment, an instance of MongoDB 4.4.x is required (tested with v4.4.12).
+
+### Installation
+
+The chart is available via the [SPT Chart Library](https://github.com/robertwtucker/spt-charts). See the [instructions](https://github.com/robertwtucker/spt-charts#getting-started) in that repository for steps to clone the library.
+
+To install the chart with the release name `docuhost`:
+
+``` bash
+$ cd charts
+$ helm upgrade --install docuhost ./docuhost --namespace=demo-prod \
+    --set db.user=admin,db.password=s3cr3t
+```
+
+These commands deploy Docuhost to the Kubernetes cluster in the `demo-prod` namespace. The parameters for the database username and password are set to `admin` and `s3cr3t`, respectively. See the [Parameters](https://github.com/robertwtucker/spt-charts/tree/master/docuhost#parameters) section of the [README](https://github.com/robertwtucker/spt-charts/tree/master/docuhost) for a list of the parameters that can/need to be configured for a successful installation.
 
 ## Roadmap
 
