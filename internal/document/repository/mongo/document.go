@@ -11,35 +11,45 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"github.com/robertwtucker/document-host/pkg/log"
 	"strings"
 
+	"github.com/robertwtucker/document-host/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/robertwtucker/document-host/pkg/model"
 )
 
 // DocumentRepository is the concrete implementation of the document repository
 type DocumentRepository struct {
-	db *mongo.Database
+	db     *mongo.Database
+	logger log.Logger
 }
 
 // NewDocumentRepository creates a new instance of the `DocumentRepository`
-func NewDocumentRepository(db *mongo.Database) *DocumentRepository {
-	return &DocumentRepository{db: db}
+func NewDocumentRepository(db *mongo.Database, logger log.Logger) *DocumentRepository {
+	return &DocumentRepository{db: db, logger: logger}
 }
 
 // Create implements the use case interface
 func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
 	// Decode and store the file
-	bucket, _ := gridfs.NewBucket(d.db)
-	var decoder = base64.NewDecoder(base64.StdEncoding, strings.NewReader(doc.FileBase64))
+	bucket, err := gridfs.NewBucket(d.db)
+	if err != nil {
+		d.logger.Error("error creating bucket: %v", err)
+		return nil, err
+	}
+	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(doc.FileBase64))
 	opts := options.GridFSUpload().SetMetadata(bson.M{"contentType": doc.ContentType})
 	fileID, err := bucket.UploadFromStream(doc.Filename, decoder, opts)
 	if err != nil {
+		d.logger.Error("error uploading document to bucket: %v", err)
 		return nil, err
 	}
 
@@ -59,31 +69,34 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	// Get the file content
 	fileID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		d.logger.Error("invalid id parameter '%s': %v", id, err)
 		return nil, err
 	}
 	bucket, _ := gridfs.NewBucket(d.db)
 	var buffer bytes.Buffer
-	_, err = bucket.DownloadToStream(fileID, &buffer)
-	if err != nil {
+	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
+		d.logger.Error("error streaming document from bucket: %v", err)
 		return nil, err
 	}
 
 	// Get the file meta
-	var file = new(model.File)
 	cursor, err := bucket.Find(bson.M{"_id": fileID})
 	if err != nil {
+		d.logger.Error("error finding document metadata: %v", err)
 		return nil, err
 	}
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
-		err := cursor.Close(ctx)
-		if err != nil {
+		if err := cursor.Close(ctx); err != nil {
 			// Eat error and continue
+			d.logger.Error("caught error closing cursor: %v", err)
 		}
 	}(cursor, ctx)
+
 	// There can be only one...
+	var file = new(model.File)
 	if cursor.Next(ctx) {
-		err := cursor.Decode(&file)
-		if err != nil {
+		if err := cursor.Decode(&file); err != nil {
+			d.logger.Error("error decoding document: %v", err)
 			return nil, err
 		}
 		file.Content = buffer.Bytes()

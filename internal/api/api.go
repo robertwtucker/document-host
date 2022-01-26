@@ -21,9 +21,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
 	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/internal/document"
 	docrepo "github.com/robertwtucker/document-host/internal/document/repository/mongo"
@@ -32,6 +29,8 @@ import (
 	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
 	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // App hods the singletons and use cases
@@ -67,7 +66,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 	logger.Debugf("connection to %s db initialized", db.Name())
 
 	// Inject the DB into the repo
-	documentRepo := docrepo.NewDocumentRepository(db)
+	documentRepo := docrepo.NewDocumentRepository(db, logger)
 
 	// Initialize the short link generation service
 	shortLinkSvc := tinyurl.NewTinyURLService(cfg.ShortLink.APIKey, cfg.ShortLink.Domain)
