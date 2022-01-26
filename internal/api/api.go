@@ -168,7 +168,7 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 	}
 
 	logger.Debug("validating connection to db (ping)")
-	err = client.Ping(ctx, nil)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		logger.Errorf("error connecting to db: %+v", err)
 		return nil, err

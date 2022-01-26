@@ -8,13 +8,11 @@
 package tinyurl
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-http-utils/headers"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
@@ -41,15 +39,18 @@ func NewTinyURLService(apiKey string, domain string) *tinyURLService {
 
 // tinyURLServiceResponse represents the response payload expected from the TinyURL service
 type tinyURLServiceResponse struct {
-	Data struct {
-		URL     string        `json:"url"`
-		Domain  string        `json:"domain"`
-		Alias   string        `json:"alias"`
-		Tags    []interface{} `json:"tags,omitempty"`
-		TinyURL string        `json:"tiny_url"`
-	} `json:"data"`
+	Data   tinyURLData   `json:"data"`
 	Code   int           `json:"code"`
 	Errors []interface{} `json:"errors,omitempty"`
+}
+
+// tinyURLData represents the TinyURL service's data payload
+type tinyURLData struct {
+	URL     string        `json:"url"`
+	Domain  string        `json:"domain"`
+	Alias   string        `json:"alias"`
+	Tags    []interface{} `json:"tags,omitempty"`
+	TinyURL string        `json:"tiny_url"`
 }
 
 // Shorten implements the Short Link generation service interface
@@ -59,32 +60,29 @@ func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequ
 		"domain": ts.Domain,
 	})
 
-	svcRequest, err := http.NewRequest(http.MethodPost, ts.ServiceURL, bytes.NewBuffer(postBody))
+	hdr := http.Header{
+		headers.Accept:        []string{"application/json"},
+		headers.Authorization: []string{"Bearer " + ts.APIKey},
+		headers.ContentType:   []string{"application/json"},
+	}
+
+	response, err := shortlink.Post(ts.ServiceURL, postBody, hdr)
 	if err != nil {
 		return nil
 	}
-	svcRequest.Header.Set(headers.Accept, "application/json")
-	svcRequest.Header.Set(headers.Authorization, "Bearer "+ts.APIKey)
-	svcRequest.Header.Set(headers.ContentType, "application/json")
+	defer response.Body.Close()
 
-	client := &http.Client{Timeout: time.Second * 10}
-	svcResponse, err := client.Do(svcRequest)
-	if err != nil {
-		return nil
-	}
-	defer svcResponse.Body.Close()
-
-	// Non-success responses won't parse. Log and retrun.
-	if svcResponse.StatusCode != http.StatusOK {
+	// Non-success responses won't parse. Log and return.
+	if response.StatusCode != http.StatusOK {
 		var respBody []byte
-		respBody, _ = io.ReadAll(svcResponse.Body)
+		respBody, _ = io.ReadAll(response.Body)
 		log.Println("service returned non-ok status:", string(respBody))
 		return nil
 	}
 
 	// Decode the service response
 	tinyResponse := new(tinyURLServiceResponse)
-	err = json.NewDecoder(svcResponse.Body).Decode(&tinyResponse)
+	err = json.NewDecoder(response.Body).Decode(&tinyResponse)
 	if err != nil {
 		return nil
 	}
