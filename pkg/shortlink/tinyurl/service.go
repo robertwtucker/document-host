@@ -8,11 +8,13 @@
 package tinyurl
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-http-utils/headers"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
@@ -57,16 +59,18 @@ type tinyURLData struct {
 func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
-		"domain": ts.Domain,
-	})
-
-	hdr := http.Header{
-		headers.Accept:        []string{"application/json"},
-		headers.Authorization: []string{"Bearer " + ts.APIKey},
-		headers.ContentType:   []string{"application/json"},
+		"domain": ts.Domain},
+	)
+	request, err := http.NewRequest(http.MethodPost, ts.ServiceURL, bytes.NewBuffer(postBody))
+	if err != nil {
+		return nil
 	}
+	request.Header.Set(headers.Accept, "application/json")
+	request.Header.Set(headers.Authorization, "Bearer "+ts.APIKey)
+	request.Header.Set(headers.ContentType, "application/json")
 
-	response, err := shortlink.Post(ts.ServiceURL, postBody, hdr)
+	client := &http.Client{Timeout: time.Second * 5}
+	response, err := client.Do(request)
 	if err != nil {
 		return nil
 	}
@@ -82,8 +86,7 @@ func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequ
 
 	// Decode the service response
 	tinyResponse := new(tinyURLServiceResponse)
-	err = json.NewDecoder(response.Body).Decode(&tinyResponse)
-	if err != nil {
+	if err = json.NewDecoder(response.Body).Decode(&tinyResponse); err != nil {
 		return nil
 	}
 

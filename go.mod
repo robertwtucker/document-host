@@ -6,6 +6,7 @@ require (
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/google/uuid v1.3.0
+	github.com/jarcoal/httpmock v1.1.0
 	github.com/labstack/echo/v4 v4.6.3
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
