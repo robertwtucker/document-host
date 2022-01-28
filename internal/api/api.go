@@ -76,7 +76,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 		logger:     logger,
 		config:     cfg,
 		db:         db,
-		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc),
+		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc, cfg),
 	}, nil
 }
 

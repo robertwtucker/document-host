@@ -11,8 +11,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/spf13/viper"
-
+	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/internal/document"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
@@ -22,13 +21,15 @@ import (
 type DocumentUseCase struct {
 	documentRepo document.Repository
 	shortLinkSvc shortlink.Service
+	config       *config.Configuration
 }
 
 // NewDocumentUseCase creates a new instance of the `DocumentUseCase`
-func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink.Service) *DocumentUseCase {
+func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink.Service, cfg *config.Configuration) *DocumentUseCase {
 	return &DocumentUseCase{
 		documentRepo: documentRepo,
 		shortLinkSvc: shortLinkSvc,
+		config:       cfg,
 	}
 }
 
@@ -39,7 +40,7 @@ func (d DocumentUseCase) Create(ctx context.Context, doc *model.Document) (*mode
 		return nil, err
 	}
 
-	doc.URL = fmt.Sprintf("%s/%s", viper.GetString("app.url"), doc.ID)
+	doc.URL = fmt.Sprintf("%s/%s", d.config.App.URL, doc.ID)
 	slRequest := &shortlink.ServiceRequest{URL: doc.URL}
 	if slResponse := d.shortLinkSvc.Shorten(ctx, slRequest); slResponse != nil {
 		doc.ShortLink = slResponse.ShortLink

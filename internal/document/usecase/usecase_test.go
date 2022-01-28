@@ -9,6 +9,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/robertwtucker/document-host/internal/config"
 	"testing"
 
 	"github.com/robertwtucker/document-host/internal/document/mocks"
@@ -31,21 +32,23 @@ func TestCreate(t *testing.T) {
 		FileBase64:  "",
 		URL:         "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
 	}
+	repo := new(mocks.Repository)
+	repo.On("Create", context.Background(), repoIn).Return(repoOut, nil)
+
 	svcIn := &shortlink.ServiceRequest{
-		URL: "http://dev.local/v1/documents/61f0023ee260d827b7156c55\"",
+		URL: "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
 	}
 	svcOut := &shortlink.ServiceResponse{
-		URL:       "http://dev.local/v1/documents/61f0023ee260d827b7156c55\"",
+		URL:       "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
 		ShortLink: "https://tiny.one/yckaxkhx",
 	}
-
-	repo := &mocks.Repository{}
-	repo.On("Create", context.Background(), repoIn).Return(repoOut)
-
-	svc := &slmocks.Service{}
+	svc := new(slmocks.Service)
 	svc.On("Shorten", context.Background(), svcIn).Return(svcOut)
 
-	uc := NewDocumentUseCase(repo, svc)
+	cfg := new(config.Configuration)
+	cfg.App.URL = "http://dev.local/v1/documents"
+
+	uc := NewDocumentUseCase(repo, svc, cfg)
 	doc, err := uc.Create(context.Background(), repoIn)
 	if assert.NoError(t, err) {
 		assert.Equal(t, doc.ShortLink, "https://tiny.one/yckaxkhx")
@@ -61,14 +64,16 @@ func TestGet(t *testing.T) {
 		Metadata: map[string]string{"contentType": "application/pdf"},
 		Size:     42,
 	}
-
-	repo := &mocks.Repository{}
+	repo := new(mocks.Repository)
 	repo.On("Get", context.Background(), id).Return(file, nil)
 
-	svc := &slmocks.Service{}
+	svc := new(slmocks.Service)
 	svc.On("Shorten", context.Background(), nil).Return(nil)
 
-	uc := NewDocumentUseCase(repo, svc)
+	cfg := new(config.Configuration)
+	cfg.App.URL = "http://dev.local/v1/documents"
+
+	uc := NewDocumentUseCase(repo, svc, cfg)
 	out, err := uc.Get(context.Background(), id)
 	if assert.NoError(t, err) {
 		assert.Equal(t, out.Filename, "test.pdf")
