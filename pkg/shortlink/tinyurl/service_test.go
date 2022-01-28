@@ -25,9 +25,9 @@ type shortLinkRequestBody struct {
 }
 
 func TestShorten(t *testing.T) {
-	const API_KEY = "${API_KEY}"
-	const DOMAIN = "tiny.one"
-	const REQ_URL = "http://dev.local/v1/documents/61f0023ee260d827b7156c55"
+	const apiKey = "${API_KEY}"
+	const domain = "tiny.one"
+	const url = "http://dev.local/v1/documents/61f0023ee260d827b7156c55"
 
 	// Mock HTTP Endpoint
 	httpmock.Activate()
@@ -37,7 +37,7 @@ func TestShorten(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 
 			assert.Equal(t, req.Header.Get(headers.Accept), "application/json")
-			assert.Equal(t, req.Header.Get(headers.Authorization), "Bearer "+API_KEY)
+			assert.Equal(t, req.Header.Get(headers.Authorization), "Bearer "+apiKey)
 			assert.Equal(t, req.Header.Get(headers.ContentType), "application/json")
 
 			var reqBody = &shortLinkRequestBody{}
@@ -45,8 +45,8 @@ func TestShorten(t *testing.T) {
 			defer req.Body.Close()
 
 			assert.NoError(t, err, "error decoding request")
-			assert.Equal(t, reqBody.URL, REQ_URL)
-			assert.Equal(t, reqBody.Domain, DOMAIN)
+			assert.Equal(t, reqBody.URL, url)
+			assert.Equal(t, reqBody.Domain, domain)
 
 			body := `{
 				"data": {
@@ -64,9 +64,9 @@ func TestShorten(t *testing.T) {
 		},
 	)
 
-	tiny := NewTinyURLService(API_KEY, DOMAIN)
-	svcRequest := &shortlink.ServiceRequest{URL: REQ_URL}
-	svcResponse := tiny.Shorten(context.Background(), svcRequest)
+	svc := NewTinyURLService(apiKey, domain)
+	svcRequest := &shortlink.ServiceRequest{URL: url}
+	svcResponse := svc.Shorten(context.Background(), svcRequest)
 
 	assert.NotNil(t, svcResponse, "service response should not be nil")
 	assert.Equal(t, svcResponse.ShortLink, "https://tiny.one/yckaxkhx")
