@@ -102,21 +102,15 @@ func Init() {
 
 // Load attempts to read the app configuration file
 func Load(logger log.Logger) (*Configuration, error) {
-	logger.Debug("attempting to load config file")
-	err := viper.ReadInConfig()
-	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// No config file, will use env settings
-		} else {
-			logger.Errorf("error loading config file: %v \n", err)
-			return nil, err
-		}
+	// OK if No config file, will use env settings
+	if err := viper.ReadInConfig(); err == nil {
+		logger.Infof("config file '%s' used", viper.ConfigFileUsed())
 	}
-	logger.Infof("config file '%s' used", viper.ConfigFileUsed())
 
 	configuration := new(Configuration)
-	err = viper.Unmarshal(&configuration)
+	err := viper.Unmarshal(&configuration)
 	if err != nil {
+		logger.Error("failed to get configuration:", err)
 		return nil, err
 	}
 
