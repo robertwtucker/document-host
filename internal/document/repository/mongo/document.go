@@ -42,9 +42,11 @@ func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*m
 	// Decode and store the file
 	bucket, err := gridfs.NewBucket(d.db)
 	if err != nil {
-		d.logger.Error("error creating bucket: %v", err)
+		d.logger.Error("new bucket failed:", err)
 		return nil, err
 	}
+	defer func() { _ = bucket.Drop() }()
+
 	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(doc.FileBase64))
 	opts := options.GridFSUpload().SetMetadata(bson.M{"contentType": doc.ContentType})
 	fileID, err := bucket.UploadFromStream(doc.Filename, decoder, opts)
@@ -72,7 +74,14 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 		d.logger.Error("invalid id parameter '%s': %v", id, err)
 		return nil, err
 	}
-	bucket, _ := gridfs.NewBucket(d.db)
+
+	bucket, err := gridfs.NewBucket(d.db)
+	if err != nil {
+		d.logger.Error("new bucket failed:", err)
+		return nil, err
+	}
+	defer func() { _ = bucket.Drop() }()
+
 	var buffer bytes.Buffer
 	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
 		d.logger.Error("error streaming document from bucket: %v", err)
@@ -85,12 +94,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 		d.logger.Error("error finding document metadata: %v", err)
 		return nil, err
 	}
-	defer func(cursor *mongo.Cursor, ctx context.Context) {
-		if err := cursor.Close(ctx); err != nil {
-			// Eat error and continue
-			d.logger.Error("caught error closing cursor: %v", err)
-		}
-	}(cursor, ctx)
+	defer func() { _ = cursor.Close(ctx) }()
 
 	// There can be only one...
 	var file = new(model.File)
