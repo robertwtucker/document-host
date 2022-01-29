@@ -4,8 +4,6 @@ version: v1beta11
 vars:
   - name: IMAGE
     value: registry.sptcloud.com/spt/docuhost
-  - name: VERSION
-    value: 0.2.1
 
 # `images` specifies the images bo be built with the build command
 images:
@@ -13,11 +11,13 @@ images:
     image: ${IMAGE}
     tags:
       - latest
-      - ${VERSION}
-      - ${VERSION}-${devspace.git.commit}
-      - dev-${devspace.git.branch}-${VERSION}
+      - dev-${devspace.timestamp}
     build:
       docker:
+        options:
+          buildArgs:
+            BUILD_VERSION: dev-${devspace.timestamp}
+            BUILD_REVISION: ${devspace.git.commit}
         skipPush: true
 
 # `deployments` tells DevSpace how to deploy this project

@@ -9,7 +9,7 @@ package main
 
 import (
 	"context"
-	logpkg "log"
+	stdlog "log"
 	"os"
 
 	"github.com/robertwtucker/document-host/internal/api"
@@ -18,13 +18,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-// version is the application's current version
-const version = "0.2.1"
-
 // main entry point
 func main() {
 	if err := run(); err != nil {
-		logpkg.Println("startup error:", err)
+		stdlog.Println("startup error:", err)
 		os.Exit(1)
 	}
 }
@@ -33,18 +30,23 @@ func main() {
 func initialize() (*config.Configuration, log.Logger, error) {
 	var logger log.Logger
 
+	version := config.AppVersion()
+	fmtVersion := version.Version + "-" + version.Revision
+	stdlog.Printf("starting %s:%s\n", config.AppName, fmtVersion)
+
 	config.Init()
 
 	if debug := viper.GetBool("log.debug"); debug {
-		logger = log.NewDebug().With(context.Background(), "version", version)
+		logger = log.NewDebug().With(context.Background(), "version", fmtVersion)
 	} else {
-		logger = log.New().With(context.Background(), "version", version)
+		logger = log.New().With(context.Background(), "version", fmtVersion)
 	}
 
 	cfg, err := config.Load(logger)
 	if err != nil {
 		return nil, nil, err
 	}
+	cfg.App.Version = fmtVersion
 
 	return cfg, logger, nil
 }
@@ -54,7 +56,7 @@ func run() error {
 	// Set up configuration and logging
 	cfg, logger, err := initialize()
 	if err != nil {
-		logpkg.Printf("failed to initialize app: %v \n", err)
+		stdlog.Printf("failed to initialize app: %v \n", err)
 		return err
 	}
 	logger.Debug("configuration:", cfg)

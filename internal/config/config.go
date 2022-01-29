@@ -11,15 +11,17 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/spf13/viper"
-
 	"github.com/robertwtucker/document-host/pkg/log"
+	"github.com/spf13/viper"
 )
+
+const AppName = "docuhost"
 
 // Configuration represents the application configuration settings
 type Configuration struct {
 	App struct {
-		URL string `mapstructure:"url"`
+		URL     string `mapstructure:"url"`
+		Version string `mapstructure:"version"`
 	} `mapstructure:"app"`
 	DB struct {
 		Prefix   string `mapstructure:"prefix"`
@@ -43,28 +45,40 @@ type Configuration struct {
 	} `mapstructure:"shortlink"`
 }
 
+type VersionInfo struct {
+	Version  string `mapstructure:"version"`
+	Revision string `mapstructure:"revision"`
+}
+
+func AppVersion() VersionInfo { return VersionInfo{Version: appVersion, Revision: revision} }
+
+var (
+	appVersion = "development"
+	revision   = "unknown"
+)
+
 // PrettyPrint outputs a formatted listing of the configuration settings
 func (c Configuration) PrettyPrint() {
 	p := fmt.Println
-	p("Configuration Settings:")
-	p("App:")
-	p("  URL:     ", c.App.URL)
-	p("DB:")
-	p("  Prefix:  ", c.DB.Prefix)
-	p("  User:    ", c.DB.User)
-	p("  Password:", c.DB.Password)
-	p("  Host:    ", c.DB.Host)
-	p("  Port:    ", c.DB.Port)
-	p("  Name:    ", c.DB.Name)
-	p("  Timeout: ", c.DB.Timeout)
-	p("Server:")
-	p("  Port:    ", c.Server.Port)
-	p("  Timeout: ", c.Server.Timeout)
-	p("Log:")
-	p("  Debug:   ", c.Log.Debug)
-	p("ShortLink: ")
-	p("  APIKey:  ", c.ShortLink.APIKey)
-	p("  Domain:  ", c.ShortLink.Domain)
+	_, _ = p("Configuration Settings:")
+	_, _ = p("App:")
+	_, _ = p("  URL:     ", c.App.URL)
+	_, _ = p("DB:")
+	_, _ = p("  Prefix:  ", c.DB.Prefix)
+	_, _ = p("  User:    ", c.DB.User)
+	_, _ = p("  Password:", c.DB.Password)
+	_, _ = p("  Host:    ", c.DB.Host)
+	_, _ = p("  Port:    ", c.DB.Port)
+	_, _ = p("  Name:    ", c.DB.Name)
+	_, _ = p("  Timeout: ", c.DB.Timeout)
+	_, _ = p("Server:")
+	_, _ = p("  Port:    ", c.Server.Port)
+	_, _ = p("  Timeout: ", c.Server.Timeout)
+	_, _ = p("Log:")
+	_, _ = p("  Debug:   ", c.Log.Debug)
+	_, _ = p("ShortLink: ")
+	_, _ = p("  APIKey:  ", c.ShortLink.APIKey)
+	_, _ = p("  Domain:  ", c.ShortLink.Domain)
 }
 
 // String displays the configuration settings
@@ -85,19 +99,19 @@ func Init() {
 
 	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
 	// from the environment. See: https://github.com/spf13/viper/issues/584
-	viper.BindEnv("app.url", "APP_URL")
-	viper.BindEnv("db.prefix", "DB_PREFIX")
-	viper.BindEnv("db.user", "DB_USER")
-	viper.BindEnv("db.password", "DB_PASSWORD")
-	viper.BindEnv("db.host", "DB_HOST")
-	viper.BindEnv("db.port", "DB_PORT")
-	viper.BindEnv("db.name", "DB_NAME")
-	viper.BindEnv("db.timeout", "DB_TIMEOUT")
-	viper.BindEnv("server.port", "SERVER_PORT")
-	viper.BindEnv("server.timeout", "SERVER_TIMEOUT")
-	viper.BindEnv("log.debug", "LOG_DEBUG")
-	viper.BindEnv("shortlink.apikey", "SHORTLINK_APIKEY")
-	viper.BindEnv("shortlink.domain", "SHORTLINK_DOMAIN")
+	_ = viper.BindEnv("app.url", "APP_URL")
+	_ = viper.BindEnv("db.prefix", "DB_PREFIX")
+	_ = viper.BindEnv("db.user", "DB_USER")
+	_ = viper.BindEnv("db.password", "DB_PASSWORD")
+	_ = viper.BindEnv("db.host", "DB_HOST")
+	_ = viper.BindEnv("db.port", "DB_PORT")
+	_ = viper.BindEnv("db.name", "DB_NAME")
+	_ = viper.BindEnv("db.timeout", "DB_TIMEOUT")
+	_ = viper.BindEnv("server.port", "SERVER_PORT")
+	_ = viper.BindEnv("server.timeout", "SERVER_TIMEOUT")
+	_ = viper.BindEnv("log.debug", "LOG_DEBUG")
+	_ = viper.BindEnv("shortlink.apikey", "SHORTLINK_APIKEY")
+	_ = viper.BindEnv("shortlink.domain", "SHORTLINK_DOMAIN")
 }
 
 // Load attempts to read the app configuration file
