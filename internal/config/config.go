@@ -11,15 +11,17 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/spf13/viper"
-
 	"github.com/robertwtucker/document-host/pkg/log"
+	"github.com/spf13/viper"
 )
+
+const AppName = "docuhost"
 
 // Configuration represents the application configuration settings
 type Configuration struct {
 	App struct {
-		URL string `mapstructure:"url"`
+		URL     string `mapstructure:"url"`
+		Version string `mapstructure:"version"`
 	} `mapstructure:"app"`
 	DB struct {
 		Prefix   string `mapstructure:"prefix"`
@@ -42,6 +44,18 @@ type Configuration struct {
 		Domain string `mapstructure:"domain"`
 	} `mapstructure:"shortlink"`
 }
+
+type VersionInfo struct {
+	Version  string `mapstructure:"version"`
+	Revision string `mapstructure:"revision"`
+}
+
+func AppVersion() VersionInfo { return VersionInfo{Version: appVersion, Revision: revision} }
+
+var (
+	appVersion = "development"
+	revision   = "unknown"
+)
 
 // PrettyPrint outputs a formatted listing of the configuration settings
 func (c Configuration) PrettyPrint() {
