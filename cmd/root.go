@@ -26,6 +26,7 @@ type rootApp struct {
 	Config config.Configuration
 }
 
+// RootApp represents the root of the application
 var RootApp = &rootApp{}
 
 // rootCmd represents the base command when called without any subcommands
