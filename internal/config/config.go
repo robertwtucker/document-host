@@ -10,9 +10,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/robertwtucker/document-host/pkg/log"
-	"github.com/spf13/viper"
 )
 
 const AppName = "docuhost"
@@ -37,7 +34,8 @@ type Configuration struct {
 		Timeout int64  `mapstructure:"timeout"`
 	} `mapstructure:"server"`
 	Log struct {
-		Debug bool `mapstructure:"debug"`
+		Debug  bool   `mapstructure:"debug"`
+		Format string `mapstructure:"format"`
 	} `mapstructure:"log"`
 	ShortLink struct {
 		APIKey string `mapstructure:"apiKey"`
@@ -76,6 +74,7 @@ func (c Configuration) PrettyPrint() {
 	_, _ = p("  Timeout: ", c.Server.Timeout)
 	_, _ = p("Log:")
 	_, _ = p("  Debug:   ", c.Log.Debug)
+	_, _ = p("  Format:   ", c.Log.Format)
 	_, _ = p("ShortLink: ")
 	_, _ = p("  APIKey:  ", c.ShortLink.APIKey)
 	_, _ = p("  Domain:  ", c.ShortLink.Domain)
@@ -90,43 +89,6 @@ func (c Configuration) String() string {
 	return string(out)
 }
 
-// Init sets up the Viper configuration
-func Init() {
-	viper.AutomaticEnv()
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
-
-	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
-	// from the environment. See: https://github.com/spf13/viper/issues/584
-	_ = viper.BindEnv("app.url", "APP_URL")
-	_ = viper.BindEnv("db.prefix", "DB_PREFIX")
-	_ = viper.BindEnv("db.user", "DB_USER")
-	_ = viper.BindEnv("db.password", "DB_PASSWORD")
-	_ = viper.BindEnv("db.host", "DB_HOST")
-	_ = viper.BindEnv("db.port", "DB_PORT")
-	_ = viper.BindEnv("db.name", "DB_NAME")
-	_ = viper.BindEnv("db.timeout", "DB_TIMEOUT")
-	_ = viper.BindEnv("server.port", "SERVER_PORT")
-	_ = viper.BindEnv("server.timeout", "SERVER_TIMEOUT")
-	_ = viper.BindEnv("log.debug", "LOG_DEBUG")
-	_ = viper.BindEnv("shortlink.apikey", "SHORTLINK_APIKEY")
-	_ = viper.BindEnv("shortlink.domain", "SHORTLINK_DOMAIN")
-}
-
-// Load attempts to read the app configuration file
-func Load(logger log.Logger) (*Configuration, error) {
-	// OK if No config file, will use env settings
-	if err := viper.ReadInConfig(); err == nil {
-		logger.Infof("config file '%s' used", viper.ConfigFileUsed())
-	}
-
-	configuration := new(Configuration)
-	err := viper.Unmarshal(&configuration)
-	if err != nil {
-		logger.Error("failed to get configuration:", err)
-		return nil, err
-	}
-
-	return configuration, nil
+func (v VersionInfo) String() string {
+	return fmt.Sprintf("v%s-%s", v.Version, v.Revision)
 }
