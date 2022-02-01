@@ -9,6 +9,7 @@ package cmd
 
 import (
 	"context"
+
 	"github.com/robertwtucker/document-host/internal/api"
 	"github.com/robertwtucker/document-host/internal/config"
 	zlog "github.com/robertwtucker/document-host/pkg/log"

@@ -9,9 +9,9 @@ package usecase
 
 import (
 	"context"
-	"github.com/robertwtucker/document-host/internal/config"
 	"testing"
 
+	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/internal/document/mocks"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"github.com/robertwtucker/document-host/pkg/shortlink"

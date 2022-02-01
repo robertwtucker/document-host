@@ -11,9 +11,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"github.com/robertwtucker/document-host/pkg/log"
 	"strings"
 
+	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
