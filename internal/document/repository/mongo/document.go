@@ -50,7 +50,7 @@ func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*m
 	opts := options.GridFSUpload().SetMetadata(bson.M{"contentType": doc.ContentType})
 	fileID, err := bucket.UploadFromStream(doc.Filename, decoder, opts)
 	if err != nil {
-		log.Error("error uploading document to bucket: %v", err)
+		log.Errorf("error uploading document to bucket: %v", err)
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	// Get the file content
 	fileID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		log.Error("invalid id parameter '%s': %v", id, err)
+		log.Errorf("invalid id parameter '%s': %v", id, err)
 		return nil, err
 	}
 
@@ -83,14 +83,14 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 
 	var buffer bytes.Buffer
 	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
-		log.Error("error streaming document from bucket: %v", err)
+		log.Errorf("error streaming document from bucket: %v", err)
 		return nil, err
 	}
 
 	// Get the file meta
 	cursor, err := bucket.Find(bson.M{"_id": fileID})
 	if err != nil {
-		log.Error("error finding document metadata: %v", err)
+		log.Errorf("error finding document metadata: %v", err)
 		return nil, err
 	}
 	defer func() { _ = cursor.Close(ctx) }()
@@ -99,7 +99,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	var file = new(model.File)
 	if cursor.Next(ctx) {
 		if err := cursor.Decode(&file); err != nil {
-			log.Error("error decoding document: %v", err)
+			log.Errorf("error decoding document: %v", err)
 			return nil, err
 		}
 		file.Content = buffer.Bytes()
