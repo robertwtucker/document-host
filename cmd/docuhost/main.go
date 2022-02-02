@@ -7,8 +7,10 @@
 
 package main
 
-import "github.com/robertwtucker/document-host/cmd"
+import (
+	"github.com/robertwtucker/document-host/cmd/root"
+)
 
 func main() {
-	cmd.Execute()
+	root.Execute()
 }

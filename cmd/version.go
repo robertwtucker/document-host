@@ -10,6 +10,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/robertwtucker/document-host/cmd/root"
 	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/spf13/cobra"
 )
@@ -26,5 +27,5 @@ var versionCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	root.Cmd().AddCommand(versionCmd)
 }

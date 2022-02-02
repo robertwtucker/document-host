@@ -5,7 +5,7 @@
 // 'LICENSE' file found in the root of this source code package.
 //
 
-package cmd
+package root
 
 import (
 	"fmt"
@@ -20,13 +20,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-type rootApp struct {
-	Config *config.Configuration
-}
-
-// RootApp represents the root application object
-var RootApp = &rootApp{}
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   config.AppName,
@@ -36,17 +29,25 @@ demo-generated documents for temporary storage. Documents can be retrieved via t
 short link returned in the upload response.
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		RootApp.Config = &config.Configuration{}
-		if err := viper.UnmarshalExact(&RootApp.Config); err != nil {
+		Config = &config.Configuration{}
+		if err := viper.UnmarshalExact(&Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
 		}
-		if err := initLog(RootApp.Config); err != nil {
+		if err := initLog(Config); err != nil {
 			return errors.Wrapf(err, "failed to initialize logging")
 		}
 		logrus.WithField("version", config.AppVersion().String()).Debug("initialized")
 		return nil
 	},
 }
+
+// Cmd returns the root command
+func Cmd() *cobra.Command {
+	return rootCmd
+}
+
+// Config represents the root application configuration object
+var Config *config.Configuration
 
 // rootCmdArgs holds the flags configured in the root Cmd
 var rootCmdArgs struct {
