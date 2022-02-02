@@ -94,12 +94,13 @@ func (c Configuration) String() string {
 
 // String returns a formatted form of the version and revision
 func (v VersionInfo) String() string {
-	return fmt.Sprintf("v%s-%s", v.Version, v.Revision)
+	return fmt.Sprintf("%s-%s", v.Version, v.Revision)
 }
 
 // Setting keys
 const (
-	AppURLKVey         = "app.url"
+	AppURLKey          = "app.url"
+	AppVersionKey      = "app.version"
 	DBPrefixKey        = "db.prefix"
 	DBUserKey          = "db.user"
 	DBPasswordKey      = "db.password"

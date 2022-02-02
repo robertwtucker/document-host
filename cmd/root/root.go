@@ -36,7 +36,7 @@ short link returned in the upload response.
 		if err := initLog(Config); err != nil {
 			return errors.Wrapf(err, "failed to initialize logging")
 		}
-		logrus.WithField("version", config.AppVersion().String()).Debug("initialized")
+		logrus.WithField("version", Config.App.Version).Debug("initialized")
 		return nil
 	},
 }
@@ -76,8 +76,8 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&rootCmdArgs.LogDebug, "verbose", "v",
 		false, "set verbose logging")
 
-	// Hide the completions options
-	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.Version = config.AppVersion().String()     // Enable the version option
+	rootCmd.CompletionOptions.DisableDefaultCmd = true // Hide the completion options
 }
 
 // initConfig reads in config file and ENV variables, if set.
@@ -101,7 +101,7 @@ func initConfig() {
 
 	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
 	// from the environment. See: https://github.com/spf13/viper/issues/584
-	_ = viper.BindEnv(config.AppURLKVey, config.AppURLEnv)
+	_ = viper.BindEnv(config.AppURLKey, config.AppURLEnv)
 	_ = viper.BindEnv(config.DBPrefixKey, config.DBPrefixEnv)
 	_ = viper.BindEnv(config.DBUserKey, config.DBUserEnv)
 	_ = viper.BindEnv(config.DBPasswordKey, config.DBPasswordEnv)
@@ -123,6 +123,9 @@ func initConfig() {
 	if rootCmdArgs.LogDebug {
 		viper.Set(config.LogDebugKey, rootCmdArgs.LogDebug)
 	}
+
+	// Set the app's version
+	viper.Set(config.AppVersionKey, config.AppVersion().String())
 }
 
 func initLog(cfg *config.Configuration) error {
