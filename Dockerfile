@@ -18,4 +18,4 @@ FROM gcr.io/distroless/static
 COPY --from=build-env /go/bin/app /
 USER nonroot:nonroot
 EXPOSE 8080
-CMD ["/app serve"]
+CMD ["/app","serve"]
