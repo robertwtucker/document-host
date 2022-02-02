@@ -8,6 +8,7 @@
 package main
 
 import (
+	_ "github.com/robertwtucker/document-host/cmd" // makes other commands visible
 	"github.com/robertwtucker/document-host/cmd/root"
 )
 
