@@ -21,11 +21,11 @@ import (
 )
 
 type rootApp struct {
-	Config config.Configuration
+	Config *config.Configuration
 }
 
 // RootApp represents the root application object
-var RootApp rootApp
+var RootApp = &rootApp{}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -36,7 +36,7 @@ demo-generated documents for temporary storage. Documents can be retrieved via t
 short link returned in the upload response.
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		RootApp := &rootApp{}
+		RootApp.Config = &config.Configuration{}
 		if err := viper.UnmarshalExact(&RootApp.Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
 		}
@@ -124,7 +124,7 @@ func initConfig() {
 	}
 }
 
-func initLog(cfg config.Configuration) error {
+func initLog(cfg *config.Configuration) error {
 	if "json" == strings.ToLower(cfg.Log.Format) {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}

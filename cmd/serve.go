@@ -21,7 +21,7 @@ var serveCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.WithField("server", RootApp.Config.Server).Debug("starting API server")
-		app, err := api.NewApp(&RootApp.Config)
+		app, err := api.NewApp(RootApp.Config)
 		if err != nil {
 			return
 		}
