@@ -64,6 +64,9 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
 		"config file (default is ./config/"+config.AppName+".yaml)")
+
+	// Hide the completions options
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
 
 // initConfig reads in config file and ENV variables if set.
