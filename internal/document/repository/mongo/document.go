@@ -13,8 +13,8 @@ import (
 	"encoding/base64"
 	"strings"
 
-	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/robertwtucker/document-host/pkg/model"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,13 +24,12 @@ import (
 
 // DocumentRepository is the concrete implementation of the document repository
 type DocumentRepository struct {
-	db     *mongo.Database
-	logger log.Logger
+	db *mongo.Database
 }
 
 // NewDocumentRepository creates a new instance of the `DocumentRepository`
-func NewDocumentRepository(db *mongo.Database, logger log.Logger) *DocumentRepository {
-	return &DocumentRepository{db: db, logger: logger}
+func NewDocumentRepository(db *mongo.Database) *DocumentRepository {
+	return &DocumentRepository{db: db}
 }
 
 // Create implements the use case interface
@@ -42,7 +41,7 @@ func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*m
 	// Decode and store the file
 	bucket, err := gridfs.NewBucket(d.db)
 	if err != nil {
-		d.logger.Error("new bucket failed:", err)
+		log.Error("new bucket failed:", err)
 		return nil, err
 	}
 	defer func() { _ = bucket.Drop() }()
@@ -51,7 +50,7 @@ func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*m
 	opts := options.GridFSUpload().SetMetadata(bson.M{"contentType": doc.ContentType})
 	fileID, err := bucket.UploadFromStream(doc.Filename, decoder, opts)
 	if err != nil {
-		d.logger.Error("error uploading document to bucket: %v", err)
+		log.Error("error uploading document to bucket: %v", err)
 		return nil, err
 	}
 
@@ -71,27 +70,27 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	// Get the file content
 	fileID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		d.logger.Error("invalid id parameter '%s': %v", id, err)
+		log.Error("invalid id parameter '%s': %v", id, err)
 		return nil, err
 	}
 
 	bucket, err := gridfs.NewBucket(d.db)
 	if err != nil {
-		d.logger.Error("new bucket failed:", err)
+		log.Error("new bucket failed:", err)
 		return nil, err
 	}
 	defer func() { _ = bucket.Drop() }()
 
 	var buffer bytes.Buffer
 	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
-		d.logger.Error("error streaming document from bucket: %v", err)
+		log.Error("error streaming document from bucket: %v", err)
 		return nil, err
 	}
 
 	// Get the file meta
 	cursor, err := bucket.Find(bson.M{"_id": fileID})
 	if err != nil {
-		d.logger.Error("error finding document metadata: %v", err)
+		log.Error("error finding document metadata: %v", err)
 		return nil, err
 	}
 	defer func() { _ = cursor.Close(ctx) }()
@@ -100,7 +99,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	var file = new(model.File)
 	if cursor.Next(ctx) {
 		if err := cursor.Decode(&file); err != nil {
-			d.logger.Error("error decoding document: %v", err)
+			log.Error("error decoding document: %v", err)
 			return nil, err
 		}
 		file.Content = buffer.Bytes()

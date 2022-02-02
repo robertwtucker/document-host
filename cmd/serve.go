@@ -8,11 +8,7 @@
 package cmd
 
 import (
-	"context"
-
 	"github.com/robertwtucker/document-host/internal/api"
-	"github.com/robertwtucker/document-host/internal/config"
-	zlog "github.com/robertwtucker/document-host/pkg/log"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -25,8 +21,7 @@ var serveCmd = &cobra.Command{
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.WithField("server", RootApp.Config.Server).Debug("starting API server")
-		logger := zlog.NewDebug().With(context.Background(), "version", config.AppVersion().String())
-		app, err := api.NewApp(&RootApp.Config, logger)
+		app, err := api.NewApp(&RootApp.Config)
 		if err != nil {
 			return
 		}
