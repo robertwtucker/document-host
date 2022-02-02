@@ -96,3 +96,39 @@ func (c Configuration) String() string {
 func (v VersionInfo) String() string {
 	return fmt.Sprintf("v%s-%s", v.Version, v.Revision)
 }
+
+// Setting keys
+const (
+	AppURLKVey         = "app.url"
+	DBPrefixKey        = "db.prefix"
+	DBUserKey          = "db.user"
+	DBPasswordKey      = "db.password"
+	DBHostKey          = "db.host"
+	DBPortKey          = "db.port"
+	DBNameKey          = "db.name"
+	DBTimeoutKey       = "db.timeout"
+	LogDebugKey        = "log.debug"
+	LogFormatKey       = "log.format"
+	ServerPortKey      = "server.port"
+	ServerTimeoutKey   = "server.timeout"
+	ShortLinkAPIKey    = "shortlink.apikey"
+	ShortLinkDomainKey = "shortlink.domain"
+)
+
+// Environment variables
+const (
+	AppURLEnv          = "APP_URL"
+	DBPrefixEnv        = "DB_PREFIX"
+	DBUserEnv          = "DB_USER"
+	DBPasswordEnv      = "DB_PASSWORD"
+	DBHostEnv          = "DB_HOST"
+	DBPortEnv          = "DB_PORT"
+	DBNameEnv          = "DB_NAME"
+	DBTimeoutEnv       = "DB_TIMEOUT"
+	LogDebugEnv        = "LOG_DEBUG"
+	LogFormatEnv       = "LOG_FORMAT"
+	ServerPortEnv      = "SERVER_PORT"
+	ServerTimeoutEnv   = "SERVER_TIMEOUT"
+	ShortLinkAPIEnv    = "SHORTLINK_APIKEY"
+	ShortLinkDomainEnv = "SHORTLINK_DOMAIN"
+)

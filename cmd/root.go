@@ -20,25 +20,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
 type rootApp struct {
 	Config config.Configuration
 }
 
-// RootApp represents the root of the application
-var RootApp = &rootApp{}
+// RootApp represents the root application object
+var RootApp rootApp
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "docuhost",
+	Use:   config.AppName,
 	Short: "provides temporary hosting of demo documents",
 	Long: `The Document Host (Docuhost) service provides a REST API endpoint to upload
 demo-generated documents for temporary storage. Documents can be retrieved via the
 short link returned in the upload response.
 `,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		//r := &rootApp{}
+		RootApp := &rootApp{}
 		if err := viper.UnmarshalExact(&RootApp.Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
 		}
@@ -48,6 +46,13 @@ short link returned in the upload response.
 		logrus.WithField("version", config.AppVersion().String()).Debug("initialized")
 		return nil
 	},
+}
+
+// rootCmdArgs holds the flags configured in the root Cmd
+var rootCmdArgs struct {
+	ConfigFile string
+	LogFormat  string
+	LogDebug   bool
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -62,47 +67,61 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "",
-		"config file (default is ./config/"+config.AppName+".yaml)")
+	// Process the PersistentFlags
+	rootCmd.PersistentFlags().StringVarP(&rootCmdArgs.ConfigFile, "config", "c",
+		"", "specify the config file (default is ./config/"+config.AppName+".yaml)")
+	rootCmd.PersistentFlags().StringVarP(&rootCmdArgs.LogFormat, "log-format", "f",
+		"text", "set the logging format [text|json]")
+	rootCmd.PersistentFlags().BoolVarP(&rootCmdArgs.LogDebug, "verbose", "v",
+		false, "set verbose logging")
 
 	// Hide the completions options
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 }
 
-// initConfig reads in config file and ENV variables if set.
+// initConfig reads in config file and ENV variables, if set.
 func initConfig() {
-	if cfgFile != "" {
+	if rootCmdArgs.ConfigFile != "" {
 		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
+		viper.SetConfigFile(rootCmdArgs.ConfigFile)
 	} else {
 		viper.AddConfigPath("./config")
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(config.AppName)
 	}
 
-	viper.AutomaticEnv()
-
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		_, _ = fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 
+	// Have Viper check the environment for matching keys
+	viper.AutomaticEnv()
+
 	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
 	// from the environment. See: https://github.com/spf13/viper/issues/584
-	_ = viper.BindEnv("app.url", "APP_URL")
-	_ = viper.BindEnv("db.prefix", "DB_PREFIX")
-	_ = viper.BindEnv("db.user", "DB_USER")
-	_ = viper.BindEnv("db.password", "DB_PASSWORD")
-	_ = viper.BindEnv("db.host", "DB_HOST")
-	_ = viper.BindEnv("db.port", "DB_PORT")
-	_ = viper.BindEnv("db.name", "DB_NAME")
-	_ = viper.BindEnv("db.timeout", "DB_TIMEOUT")
-	_ = viper.BindEnv("server.port", "SERVER_PORT")
-	_ = viper.BindEnv("server.timeout", "SERVER_TIMEOUT")
-	_ = viper.BindEnv("log.debug", "LOG_DEBUG")
-	_ = viper.BindEnv("log.format", "LOG_FORMAT")
-	_ = viper.BindEnv("shortlink.apikey", "SHORTLINK_APIKEY")
-	_ = viper.BindEnv("shortlink.domain", "SHORTLINK_DOMAIN")
+	_ = viper.BindEnv(config.AppURLKVey, config.AppURLEnv)
+	_ = viper.BindEnv(config.DBPrefixKey, config.DBPrefixEnv)
+	_ = viper.BindEnv(config.DBUserKey, config.DBUserEnv)
+	_ = viper.BindEnv(config.DBPasswordKey, config.DBPasswordEnv)
+	_ = viper.BindEnv(config.DBHostKey, config.DBHostEnv)
+	_ = viper.BindEnv(config.DBPortKey, config.DBPortEnv)
+	_ = viper.BindEnv(config.DBNameKey, config.DBNameEnv)
+	_ = viper.BindEnv(config.DBTimeoutKey, config.DBTimeoutEnv)
+	_ = viper.BindEnv(config.ServerPortKey, config.ServerPortEnv)
+	_ = viper.BindEnv(config.ServerTimeoutKey, config.ServerTimeoutEnv)
+	_ = viper.BindEnv(config.LogDebugKey, config.LogDebugEnv)
+	_ = viper.BindEnv(config.LogFormatKey, config.LogFormatEnv)
+	_ = viper.BindEnv(config.ShortLinkAPIKey, config.ShortLinkAPIEnv)
+	_ = viper.BindEnv(config.ShortLinkDomainKey, config.ShortLinkDomainEnv)
+
+	// Command-line pflags replace environment
+	if rootCmdArgs.LogFormat != "" {
+		viper.Set(config.LogFormatKey, rootCmdArgs.LogFormat)
+	}
+	if rootCmdArgs.LogDebug {
+		viper.Set(config.LogDebugKey, rootCmdArgs.LogDebug)
+	}
 }
 
 func initLog(cfg config.Configuration) error {
