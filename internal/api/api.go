@@ -27,8 +27,8 @@ import (
 	dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
 	"github.com/robertwtucker/document-host/internal/document/usecase"
 	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
-	"github.com/robertwtucker/document-host/pkg/log"
 	"github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -36,7 +36,6 @@ import (
 // App hods the singletons and use cases
 type App struct {
 	config     *config.Configuration
-	logger     log.Logger
 	db         *mongo.Database
 	documentUC document.UseCase
 }
@@ -55,25 +54,24 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 // NewApp initializes and returns an App instance
-func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
-	logger.Debug("start: wiring app components")
+func NewApp(cfg *config.Configuration) (*App, error) {
+	log.Debug("start: wiring app components")
 
 	// Initialize MongoDB
-	db, err := initDB(cfg, logger)
+	db, err := initDB(cfg)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("error initializing db: %v", err))
 	}
-	logger.Debugf("connection to %s db initialized", db.Name())
+	log.Debugf("connection to %s db initialized", db.Name())
 
 	// Inject the DB into the repo
-	documentRepo := docrepo.NewDocumentRepository(db, logger)
+	documentRepo := docrepo.NewDocumentRepository(db)
 
 	// Initialize the short link generation service
 	shortLinkSvc := tinyurl.NewTinyURLService(cfg.ShortLink.APIKey, cfg.ShortLink.Domain)
-	logger.Debug("end: wiring app components")
+	log.Debug("end: wiring app components")
 
 	return &App{
-		logger:     logger,
 		config:     cfg,
 		db:         db,
 		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc, cfg),
@@ -82,7 +80,7 @@ func NewApp(cfg *config.Configuration, logger log.Logger) (*App, error) {
 
 // Run does the heavy-lifting for the App
 func (a *App) Run() {
-	a.logger.Debug("start: configuring server")
+	log.Debug("start: configuring server")
 
 	// Echo setup
 	e := echo.New()
@@ -107,14 +105,14 @@ func (a *App) Run() {
 	//   ...
 	// }
 	dochttp.RegisterHTTPHandlers(e, a.documentUC)
-	a.logger.Debug("end: configuring server")
+	log.Debug("end: configuring server")
 
 	// Start server using goroutine
 	go func() {
-		a.logger.Debug("starting the server")
+		log.Debug("starting the server")
 		err := e.Start(":" + a.config.Server.Port)
 		if err != nil && err != http.ErrServerClosed {
-			e.Logger.Fatalf("shutting down the server: %+v", err)
+			log.Fatalf("shutting down the server: %+v", err)
 		}
 	}()
 
@@ -127,12 +125,12 @@ func (a *App) Run() {
 		context.Background(), time.Duration(a.config.Server.Timeout)*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
+		log.Fatal(err)
 	}
 }
 
 // initDB sets up the MongoDB client and establishes the DB connection
-func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, error) {
+func initDB(cfg *config.Configuration) (*mongo.Database, error) {
 	// User configuration
 	var authUser string
 	var authSource = "admin"
@@ -147,12 +145,12 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 
 	// Client configuration
 	uri := fmt.Sprintf("%s://%s:%d", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
-	logger.Debugf("creating db client for %s.%s@%s:%d",
+	log.Debugf("creating db client for %s.%s@%s:%d",
 		authSource, authUser, cfg.DB.Host, cfg.DB.Port)
 	opts := options.Client().ApplyURI(uri).SetAuth(credential)
 	client, err := mongo.NewClient(opts)
 	if err != nil {
-		logger.Errorf("error creating db client: %+v", err)
+		log.Errorf("error creating db client: %+v", err)
 		return nil, err
 	}
 
@@ -163,14 +161,14 @@ func initDB(cfg *config.Configuration, logger log.Logger) (*mongo.Database, erro
 
 	// Create connection using the timeout context
 	if err := client.Connect(ctx); err != nil {
-		logger.Errorf("error connecting client: %+v", err)
+		log.Errorf("error connecting client: %+v", err)
 		return nil, err
 	}
 
-	logger.Debug("validating connection to db (ping)")
+	log.Debug("validating connection to db (ping)")
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		logger.Errorf("error connecting to db: %+v", err)
+		log.Errorf("error connecting to db: %+v", err)
 		return nil, err
 	}
 

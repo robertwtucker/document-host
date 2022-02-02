@@ -10,11 +10,9 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/robertwtucker/document-host/pkg/log"
-	"github.com/spf13/viper"
 )
 
+// AppName represents the name of the application
 const AppName = "docuhost"
 
 // Configuration represents the application configuration settings
@@ -37,7 +35,8 @@ type Configuration struct {
 		Timeout int64  `mapstructure:"timeout"`
 	} `mapstructure:"server"`
 	Log struct {
-		Debug bool `mapstructure:"debug"`
+		Debug  bool   `mapstructure:"debug"`
+		Format string `mapstructure:"format"`
 	} `mapstructure:"log"`
 	ShortLink struct {
 		APIKey string `mapstructure:"apiKey"`
@@ -45,11 +44,13 @@ type Configuration struct {
 	} `mapstructure:"shortlink"`
 }
 
+// VersionInfo represents the application's latest version tag and Git revision
 type VersionInfo struct {
 	Version  string `mapstructure:"version"`
 	Revision string `mapstructure:"revision"`
 }
 
+// AppVersion returns the application's latest version and Git revision
 func AppVersion() VersionInfo { return VersionInfo{Version: appVersion, Revision: revision} }
 
 var (
@@ -76,6 +77,7 @@ func (c Configuration) PrettyPrint() {
 	_, _ = p("  Timeout: ", c.Server.Timeout)
 	_, _ = p("Log:")
 	_, _ = p("  Debug:   ", c.Log.Debug)
+	_, _ = p("  Format:   ", c.Log.Format)
 	_, _ = p("ShortLink: ")
 	_, _ = p("  APIKey:  ", c.ShortLink.APIKey)
 	_, _ = p("  Domain:  ", c.ShortLink.Domain)
@@ -90,43 +92,44 @@ func (c Configuration) String() string {
 	return string(out)
 }
 
-// Init sets up the Viper configuration
-func Init() {
-	viper.AutomaticEnv()
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
-
-	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
-	// from the environment. See: https://github.com/spf13/viper/issues/584
-	_ = viper.BindEnv("app.url", "APP_URL")
-	_ = viper.BindEnv("db.prefix", "DB_PREFIX")
-	_ = viper.BindEnv("db.user", "DB_USER")
-	_ = viper.BindEnv("db.password", "DB_PASSWORD")
-	_ = viper.BindEnv("db.host", "DB_HOST")
-	_ = viper.BindEnv("db.port", "DB_PORT")
-	_ = viper.BindEnv("db.name", "DB_NAME")
-	_ = viper.BindEnv("db.timeout", "DB_TIMEOUT")
-	_ = viper.BindEnv("server.port", "SERVER_PORT")
-	_ = viper.BindEnv("server.timeout", "SERVER_TIMEOUT")
-	_ = viper.BindEnv("log.debug", "LOG_DEBUG")
-	_ = viper.BindEnv("shortlink.apikey", "SHORTLINK_APIKEY")
-	_ = viper.BindEnv("shortlink.domain", "SHORTLINK_DOMAIN")
+// String returns a formatted form of the version and revision
+func (v VersionInfo) String() string {
+	return fmt.Sprintf("%s-%s", v.Version, v.Revision)
 }
 
-// Load attempts to read the app configuration file
-func Load(logger log.Logger) (*Configuration, error) {
-	// OK if No config file, will use env settings
-	if err := viper.ReadInConfig(); err == nil {
-		logger.Infof("config file '%s' used", viper.ConfigFileUsed())
-	}
+// Setting keys
+const (
+	AppURLKey          = "app.url"
+	AppVersionKey      = "app.version"
+	DBPrefixKey        = "db.prefix"
+	DBUserKey          = "db.user"
+	DBPasswordKey      = "db.password"
+	DBHostKey          = "db.host"
+	DBPortKey          = "db.port"
+	DBNameKey          = "db.name"
+	DBTimeoutKey       = "db.timeout"
+	LogDebugKey        = "log.debug"
+	LogFormatKey       = "log.format"
+	ServerPortKey      = "server.port"
+	ServerTimeoutKey   = "server.timeout"
+	ShortLinkAPIKey    = "shortlink.apikey"
+	ShortLinkDomainKey = "shortlink.domain"
+)
 
-	configuration := new(Configuration)
-	err := viper.Unmarshal(&configuration)
-	if err != nil {
-		logger.Error("failed to get configuration:", err)
-		return nil, err
-	}
-
-	return configuration, nil
-}
+// Environment variables
+const (
+	AppURLEnv          = "APP_URL"
+	DBPrefixEnv        = "DB_PREFIX"
+	DBUserEnv          = "DB_USER"
+	DBPasswordEnv      = "DB_PASSWORD"
+	DBHostEnv          = "DB_HOST"
+	DBPortEnv          = "DB_PORT"
+	DBNameEnv          = "DB_NAME"
+	DBTimeoutEnv       = "DB_TIMEOUT"
+	LogDebugEnv        = "LOG_DEBUG"
+	LogFormatEnv       = "LOG_FORMAT"
+	ServerPortEnv      = "SERVER_PORT"
+	ServerTimeoutEnv   = "SERVER_TIMEOUT"
+	ShortLinkAPIEnv    = "SHORTLINK_APIKEY"
+	ShortLinkDomainEnv = "SHORTLINK_DOMAIN"
+)
