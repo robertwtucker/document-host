@@ -19,6 +19,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	TestAppURL    = "http://dev.local/v1/documents"
+	TestDocID     = "61f0023ee260d827b7156c55"
+	TestShortLink = "https://tiny.one/yckaxkhx"
+)
+
 func TestCreate(t *testing.T) {
 	repoIn := &model.Document{
 		Filename:    "test.pdf",
@@ -26,37 +32,37 @@ func TestCreate(t *testing.T) {
 		FileBase64:  "VGVzdEZpbGU=",
 	}
 	repoOut := &model.Document{
-		ID:          "61f0023ee260d827b7156c55",
+		ID:          TestDocID,
 		Filename:    "test.pdf",
 		ContentType: "application/pdf",
 		FileBase64:  "",
-		URL:         "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
+		URL:         TestAppURL + "/" + TestDocID,
 	}
 	repo := new(mocks.Repository)
 	repo.On("Create", context.Background(), repoIn).Return(repoOut, nil)
 
 	svcIn := &shortlink.ServiceRequest{
-		URL: "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
+		URL: TestAppURL + "/" + TestDocID,
 	}
 	svcOut := &shortlink.ServiceResponse{
-		URL:       "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
-		ShortLink: "https://tiny.one/yckaxkhx",
+		URL:       TestAppURL + "/" + TestDocID,
+		ShortLink: TestShortLink,
 	}
 	svc := new(slmocks.Service)
 	svc.On("Shorten", context.Background(), svcIn).Return(svcOut)
 
 	cfg := new(config.Configuration)
-	cfg.App.URL = "http://dev.local/v1/documents"
+	cfg.App.URL = TestAppURL
 
 	uc := NewDocumentUseCase(repo, svc, cfg)
 	doc, err := uc.Create(context.Background(), repoIn)
 	if assert.NoError(t, err) {
-		assert.Equal(t, doc.ShortLink, "https://tiny.one/yckaxkhx")
+		assert.Equal(t, doc.ShortLink, TestShortLink)
 	}
 }
 
 func TestGet(t *testing.T) {
-	id := "61f0023ee260d827b7156c55"
+	id := TestDocID
 	fileBytes := []byte("TestFile")
 	file := &model.File{
 		Filename: "test.pdf",
@@ -71,7 +77,7 @@ func TestGet(t *testing.T) {
 	svc.On("Shorten", context.Background(), nil).Return(nil)
 
 	cfg := new(config.Configuration)
-	cfg.App.URL = "http://dev.local/v1/documents"
+	cfg.App.URL = TestAppURL
 
 	uc := NewDocumentUseCase(repo, svc, cfg)
 	out, err := uc.Get(context.Background(), id)

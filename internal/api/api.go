@@ -9,7 +9,6 @@ package api
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -60,7 +59,7 @@ func NewApp(cfg *config.Configuration) (*App, error) {
 	// Initialize MongoDB
 	db, err := initDB(cfg)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("error initializing db: %v", err))
+		return nil, fmt.Errorf("error initializing db: %v", err)
 	}
 	log.Debugf("connection to %s db initialized", db.Name())
 
