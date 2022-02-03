@@ -21,11 +21,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/robertwtucker/document-host/internal/config"
-	"github.com/robertwtucker/document-host/internal/document"
+	doc "github.com/robertwtucker/document-host/internal/document"
 	docrepo "github.com/robertwtucker/document-host/internal/document/repository/mongo"
 	dochttp "github.com/robertwtucker/document-host/internal/document/transport/http"
-	"github.com/robertwtucker/document-host/internal/document/usecase"
-	health "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
+	docuc "github.com/robertwtucker/document-host/internal/document/usecase"
+	hc "github.com/robertwtucker/document-host/internal/healthcheck"
+	hcrepo "github.com/robertwtucker/document-host/internal/healthcheck/repository/mongo"
+	hchttp "github.com/robertwtucker/document-host/internal/healthcheck/transport/http"
+	hcuc "github.com/robertwtucker/document-host/internal/healthcheck/usecase"
 	"github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -36,7 +39,8 @@ import (
 type App struct {
 	config     *config.Configuration
 	db         *mongo.Database
-	documentUC document.UseCase
+	documentUC doc.UseCase
+	healthUC   hc.UseCase
 }
 
 // CustomValidator provides a validator implementation for echo
@@ -68,12 +72,16 @@ func NewApp(cfg *config.Configuration) (*App, error) {
 
 	// Initialize the short link generation service
 	shortLinkSvc := tinyurl.NewTinyURLService(cfg.ShortLink.APIKey, cfg.ShortLink.Domain)
+
+	// Inject the DB into the helper
+	dbHelper := hcrepo.NewHealthCheckDatabaseHelper(db)
 	log.Debug("end: wiring app components")
 
 	return &App{
 		config:     cfg,
 		db:         db,
-		documentUC: usecase.NewDocumentUseCase(documentRepo, shortLinkSvc, cfg),
+		documentUC: docuc.NewDocumentUseCase(documentRepo, shortLinkSvc, cfg),
+		healthUC:   hcuc.NewHealthCheckUseCase(dbHelper),
 	}, nil
 }
 
@@ -92,7 +100,7 @@ func (a *App) Run() {
 	e.Validator = &CustomValidator{validator: validator.New()}
 
 	// Register HTTP endpoints
-	health.RegisterHTTPHandlers(e)
+	hchttp.RegisterHTTPHandlers(e, a.healthUC)
 
 	// Register API endpoints
 	// Pattern:

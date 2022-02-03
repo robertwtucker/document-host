@@ -7,16 +7,12 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/robertwtucker/document-host/internal/healthcheck"
 )
 
 // RegisterHTTPHandlers maps the handler for the health check endpoint
-func RegisterHTTPHandlers(e *echo.Echo) {
-	e.GET("/health", healthCheckHandler)
-}
-
-func healthCheckHandler(c echo.Context) error {
-	return c.String(http.StatusOK, "OK")
+func RegisterHTTPHandlers(e *echo.Echo, uc healthcheck.UseCase) {
+	h := NewHandler(uc)
+	e.GET("/health", h.Get)
 }
