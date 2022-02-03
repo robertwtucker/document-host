@@ -129,7 +129,7 @@ func initConfig() {
 }
 
 func initLog(cfg *config.Configuration) error {
-	if "json" == strings.ToLower(cfg.Log.Format) {
+	if strings.ToLower(cfg.Log.Format) == "json" {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
 	if cfg.Log.Debug {
