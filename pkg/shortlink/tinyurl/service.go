@@ -31,7 +31,7 @@ type tinyURLService struct {
 }
 
 // NewTinyURLService returns a new instance of the TinyURL short link service
-func NewTinyURLService(apiKey string, domain string) *tinyURLService {
+func NewTinyURLService(apiKey string, domain string) *tinyURLService { //nolint
 	return &tinyURLService{
 		APIKey:     apiKey,
 		Domain:     domain,
@@ -56,7 +56,7 @@ type tinyURLData struct {
 }
 
 // Shorten implements the Short Link generation service interface
-func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
+func (ts tinyURLService) Shorten(_ context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
 		"domain": ts.Domain},
@@ -74,7 +74,7 @@ func (ts tinyURLService) Shorten(ctx context.Context, req *shortlink.ServiceRequ
 	if err != nil {
 		return nil
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close }()
 
 	// Non-success responses won't parse. Log and return.
 	if response.StatusCode != http.StatusOK {
