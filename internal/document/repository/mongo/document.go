@@ -33,11 +33,7 @@ func NewDocumentRepository(db *mongo.Database) *DocumentRepository {
 }
 
 // Create implements the use case interface
-func (d DocumentRepository) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
+func (d DocumentRepository) Create(_ context.Context, doc *model.Document) (*model.Document, error) {
 	// Decode and store the file
 	bucket, err := gridfs.NewBucket(d.db)
 	if err != nil {
