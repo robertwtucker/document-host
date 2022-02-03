@@ -116,7 +116,7 @@ func (a *App) Run() {
 
 	// Start server using goroutine
 	go func() {
-		log.Debug("starting the server")
+		log.WithField("server.port", a.config.Server.Port).Debug("starting the server")
 		err := e.Start(":" + a.config.Server.Port)
 		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("shutting down the server: %+v", err)
