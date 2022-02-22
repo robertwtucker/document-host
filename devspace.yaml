@@ -49,7 +49,7 @@ deployments:
         persistence:
           size: 2Gi
         image:
-          tag: 5.0.5-debian-10-r40
+          tag: 5.0.6-debian-10-r20
       valuesFiles:
         - ./tmp/mongodb-dev.yaml
 
