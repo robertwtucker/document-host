@@ -40,7 +40,6 @@ func (d DocumentRepository) Create(_ context.Context, doc *model.Document) (*mod
 		log.Error("new bucket failed:", err)
 		return nil, err
 	}
-	defer func() { _ = bucket.Drop() }()
 
 	decoder := base64.NewDecoder(base64.StdEncoding, strings.NewReader(doc.FileBase64))
 	opts := options.GridFSUpload().SetMetadata(bson.M{"contentType": doc.ContentType})
