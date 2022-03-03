@@ -74,7 +74,6 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 		log.Error("new bucket failed:", err)
 		return nil, err
 	}
-	defer func() { _ = bucket.Drop() }()
 
 	var buffer bytes.Buffer
 	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
