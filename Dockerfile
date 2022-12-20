@@ -1,4 +1,4 @@
-FROM golang:1.17-bullseye AS build-env
+FROM golang:1.19-bullseye AS build-env
 
 ARG BUILD_VERSION=development
 ARG BUILD_REVISION=unknown
