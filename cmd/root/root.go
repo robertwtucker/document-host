@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// rootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   config.AppName,
 	Short: "provides temporary hosting of demo documents",
@@ -33,23 +33,21 @@ short link returned in the upload response.
 		if err := viper.UnmarshalExact(&Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
 		}
-		if err := initLog(Config); err != nil {
-			return errors.Wrapf(err, "failed to initialize logging")
-		}
+		initLog(Config)
 		logrus.WithField("version", Config.App.Version).Debug("initialized")
 		return nil
 	},
 }
 
-// Cmd returns the root command
+// Cmd returns the root command.
 func Cmd() *cobra.Command {
 	return rootCmd
 }
 
-// Config represents the root application configuration object
+// Config represents the root application configuration object.
 var Config *config.Configuration
 
-// rootCmdArgs holds the flags configured in the root Cmd
+// rootCmdArgs holds the flags configured in the root Cmd.
 var rootCmdArgs struct {
 	ConfigFile string
 	LogFormat  string
@@ -65,10 +63,11 @@ func Execute() {
 	}
 }
 
+//nolint:gochecknoinits // Required for proper Cobra initialization.
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	// Process the PersistentFlags
+	// Process the PersistentFlags.
 	rootCmd.PersistentFlags().StringVarP(&rootCmdArgs.ConfigFile, "config", "c",
 		"", "specify the config file (default is ./config/"+config.AppName+".yaml)")
 	rootCmd.PersistentFlags().StringVarP(&rootCmdArgs.LogFormat, "log-format", "f",
@@ -96,7 +95,7 @@ func initConfig() {
 		_, _ = fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 
-	// Have Viper check the environment for matching keys
+	// Have Viper check the environment for matching keys.
 	viper.AutomaticEnv()
 
 	// WORKAROUND: Viper doesn't seem to be overriding the config file with values
@@ -116,7 +115,7 @@ func initConfig() {
 	_ = viper.BindEnv(config.ShortLinkAPIKey, config.ShortLinkAPIEnv)
 	_ = viper.BindEnv(config.ShortLinkDomainKey, config.ShortLinkDomainEnv)
 
-	// Command-line pflags replace environment
+	// Command-line pflags replace environment.
 	if rootCmdArgs.LogFormat != "" {
 		viper.Set(config.LogFormatKey, rootCmdArgs.LogFormat)
 	}
@@ -124,11 +123,11 @@ func initConfig() {
 		viper.Set(config.LogDebugKey, rootCmdArgs.LogDebug)
 	}
 
-	// Set the app's version
+	// Set the app's version.
 	viper.Set(config.AppVersionKey, config.AppVersion().String())
 }
 
-func initLog(cfg *config.Configuration) error {
+func initLog(cfg *config.Configuration) {
 	if strings.ToLower(cfg.Log.Format) == "json" {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
@@ -139,6 +138,4 @@ func initLog(cfg *config.Configuration) error {
 	}
 	log.SetOutput(logrus.New().Writer())
 	log.SetFlags(0)
-
-	return nil
 }

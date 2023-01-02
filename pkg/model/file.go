@@ -7,7 +7,7 @@
 
 package model
 
-// File represents the document as retrieved from the repository
+// File represents the document as retrieved from the repository.
 type File struct {
 	Filename string            `bson:"filename" json:"filename"`
 	Content  []byte            `bson:"-" json:"-"`

@@ -13,17 +13,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// HealthCheckDatabaseHelper is the concrete implementation of the MongoDB helper
+// HealthCheckDatabaseHelper is the concrete implementation of the MongoDB helper.
 type HealthCheckDatabaseHelper struct {
 	db *mongo.Database
 }
 
-// NewHealthCheckDatabaseHelper creates a new instance of the `HealthCheckDatabaseHelper`
+// NewHealthCheckDatabaseHelper creates a new instance of the `HealthCheckDatabaseHelper`.
 func NewHealthCheckDatabaseHelper(db *mongo.Database) *HealthCheckDatabaseHelper {
 	return &HealthCheckDatabaseHelper{db: db}
 }
 
-// CheckDB implements the use case interface
+// CheckDB implements the use case interface.
 func (h HealthCheckDatabaseHelper) CheckDB(ctx context.Context) error {
 	if ctx == nil {
 		ctx = context.Background()

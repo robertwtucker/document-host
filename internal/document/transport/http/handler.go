@@ -16,17 +16,17 @@ import (
 	"github.com/robertwtucker/document-host/pkg/model"
 )
 
-// Handler implements the use case for the document resource
+// Handler implements the use case for the document resource.
 type Handler struct {
 	useCase document.UseCase
 }
 
-// NewHandler creates a new `Handler` instance for the document use case
+// NewHandler creates a new `Handler` instance for the document use case.
 func NewHandler(uc document.UseCase) *Handler {
 	return &Handler{useCase: uc}
 }
 
-// Create implements the use case interface
+// Create implements the use case interface.
 func (h *Handler) Create(c echo.Context) error {
 	input := new(model.Document)
 	if err := c.Bind(input); err != nil {
@@ -37,10 +37,10 @@ func (h *Handler) Create(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	c.Response().Header().Set(echo.HeaderLocation, result.URL)
-	return c.JSON(201, result)
+	return c.JSON(http.StatusCreated, result)
 }
 
-// Get implements the use case interface
+// Get implements the use case interface.
 func (h *Handler) Get(c echo.Context) error {
 	id := c.Param("id")
 	file, err := h.useCase.Get(context.Background(), id)

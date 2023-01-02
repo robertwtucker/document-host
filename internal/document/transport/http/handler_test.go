@@ -5,7 +5,7 @@
 // 'LICENSE' file found in the root of this source code package.
 //
 
-package http
+package http_test
 
 import (
 	"bytes"
@@ -17,6 +17,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/robertwtucker/document-host/internal/document/mocks"
+	subject "github.com/robertwtucker/document-host/internal/document/transport/http"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"github.com/stretchr/testify/assert"
 )
@@ -42,7 +43,7 @@ func TestCreate(t *testing.T) {
 	e := echo.New()
 	uc := new(mocks.UseCase)
 	uc.On("Create", context.Background(), input).Return(doc, nil)
-	RegisterHTTPHandlers(e, uc)
+	subject.RegisterHTTPHandlers(e, uc)
 
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodPost, "/v1/documents", bytes.NewBuffer(body))
@@ -50,7 +51,7 @@ func TestCreate(t *testing.T) {
 
 	c := e.NewContext(req, rec)
 	c.SetPath("/v1/documents")
-	h := NewHandler(uc)
+	h := subject.NewHandler(uc)
 
 	if assert.NoError(t, h.Create(c)) {
 		assert.Equal(t, 201, rec.Code)
@@ -70,7 +71,7 @@ func TestGet(t *testing.T) {
 	e := echo.New()
 	uc := new(mocks.UseCase)
 	uc.On("Get", context.Background(), "61f0023ee260d827b7156c55").Return(file, nil)
-	RegisterHTTPHandlers(e, uc)
+	subject.RegisterHTTPHandlers(e, uc)
 
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/v1/documents/id", nil)
@@ -79,7 +80,7 @@ func TestGet(t *testing.T) {
 	c.SetPath("/v1/documents/:id")
 	c.SetParamNames("id")
 	c.SetParamValues("61f0023ee260d827b7156c55")
-	h := NewHandler(uc)
+	h := subject.NewHandler(uc)
 
 	if assert.NoError(t, h.Get(c)) {
 		assert.Equal(t, 200, rec.Code)

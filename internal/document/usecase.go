@@ -13,7 +13,7 @@ import (
 	"github.com/robertwtucker/document-host/pkg/model"
 )
 
-// UseCase defines the operations supported by the document resource
+// UseCase defines the operations supported by the document resource.
 type UseCase interface {
 	Create(ctx context.Context, doc *model.Document) (*model.Document, error)
 	Get(ctx context.Context, id string) (*model.File, error)

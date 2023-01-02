@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// serveCmd represents the serve command
+// serveCmd represents the serve command.
 var serveCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "starts the API server",
@@ -30,6 +30,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
+//nolint:gochecknoinits // Required for proper Cobra initialization.
 func init() {
 	root.Cmd().AddCommand(serveCmd)
 }

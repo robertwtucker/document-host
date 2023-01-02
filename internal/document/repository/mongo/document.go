@@ -22,17 +22,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// DocumentRepository is the concrete implementation of the document repository
+// DocumentRepository is the concrete implementation of the document repository.
 type DocumentRepository struct {
 	db *mongo.Database
 }
 
-// NewDocumentRepository creates a new instance of the `DocumentRepository`
+// NewDocumentRepository creates a new instance of the `DocumentRepository`.
 func NewDocumentRepository(db *mongo.Database) *DocumentRepository {
 	return &DocumentRepository{db: db}
 }
 
-// Create implements the use case interface
+// Create implements the use case interface.
 func (d DocumentRepository) Create(_ context.Context, doc *model.Document) (*model.Document, error) {
 	// Decode and store the file
 	bucket, err := gridfs.NewBucket(d.db)
@@ -49,20 +49,20 @@ func (d DocumentRepository) Create(_ context.Context, doc *model.Document) (*mod
 		return nil, err
 	}
 
-	// Update doc with ID and strip base64 element
+	// Update doc with ID and strip base64 element.
 	doc.ID = primitive.ObjectID.Hex(fileID)
 	doc.FileBase64 = ""
 
 	return doc, nil
 }
 
-// Get implements the use case interface
+// Get implements the use case interface.
 func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	// Get the file content
+	// Get the file content.
 	fileID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Errorf("invalid id parameter '%s': %v", id, err)
@@ -76,12 +76,12 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	}
 
 	var buffer bytes.Buffer
-	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
+	if _, err = bucket.DownloadToStream(fileID, &buffer); err != nil {
 		log.Errorf("error streaming document from bucket: %v", err)
 		return nil, err
 	}
 
-	// Get the file meta
+	// Get the file meta.
 	cursor, err := bucket.Find(bson.M{"_id": fileID})
 	if err != nil {
 		log.Errorf("error finding document metadata: %v", err)
@@ -92,7 +92,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	// There can be only one...
 	var file = new(model.File)
 	if cursor.Next(ctx) {
-		if err := cursor.Decode(&file); err != nil {
+		if err = cursor.Decode(&file); err != nil {
 			log.Errorf("error decoding document: %v", err)
 			return nil, err
 		}

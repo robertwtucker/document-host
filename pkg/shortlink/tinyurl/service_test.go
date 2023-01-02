@@ -1,11 +1,11 @@
 //
 // Copyright (c) 2022 Quadient Group AG
 //
-// This file is subject to the terms and conditions defined in the
+// This file is tinyurl to the terms and conditions defined in the
 // 'LICENSE' file found in the root of this source code package.
 //
 
-package tinyurl
+package tinyurl_test
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 	"github.com/go-http-utils/headers"
 	"github.com/jarcoal/httpmock"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
+	"github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,38 +34,37 @@ func TestShorten(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodPost, tinyServiceURL,
+	httpmock.RegisterResponder(http.MethodPost, tinyurl.ServiceURL,
 		func(req *http.Request) (*http.Response, error) {
-
 			assert.Equal(t, req.Header.Get(headers.Accept), "application/json")
 			assert.Equal(t, req.Header.Get(headers.Authorization), "Bearer "+apiKey)
 			assert.Equal(t, req.Header.Get(headers.ContentType), "application/json")
 
 			var reqBody = &shortLinkRequestBody{}
 			err := json.NewDecoder(req.Body).Decode(&reqBody)
-			defer req.Body.Close()
+			defer func() { _ = req.Body.Close }()
 
 			assert.NoError(t, err, "error decoding request")
 			assert.Equal(t, reqBody.URL, url)
 			assert.Equal(t, reqBody.Domain, domain)
 
 			body := `{
-				"data": {
-					"url": "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
-					"domain": "tiny.one",
-					"alias": "yckaxkhx",
-					"tags": [],
-					"tiny_url": "https://tiny.one/yckaxkhx"
-				},
-				"code": 0,
-				"errors": []
-			}`
+          "data": {
+            "url": "http://dev.local/v1/documents/61f0023ee260d827b7156c55",
+            "domain": "tiny.one",
+            "alias": "yckaxkhx",
+            "tags": [],
+            "tiny_url": "https://tiny.one/yckaxkhx"
+          },
+          "code": 0,
+          "errors": []
+        }`
 
 			return httpmock.NewStringResponse(200, body), nil
 		},
 	)
 
-	svc := NewTinyURLService(apiKey, domain)
+	svc := tinyurl.NewTinyURLService(apiKey, domain)
 	svcRequest := &shortlink.ServiceRequest{URL: url}
 	svcResponse := svc.Shorten(context.Background(), svcRequest)
 

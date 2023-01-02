@@ -15,17 +15,17 @@ import (
 	"github.com/robertwtucker/document-host/internal/healthcheck"
 )
 
-// Handler implements the use case for the document resource
+// Handler implements the use case for the healthcheck resource.
 type Handler struct {
 	useCase healthcheck.UseCase
 }
 
-// NewHandler creates a new `Handler` instance for the document use case
+// NewHandler creates a new `Handler` instance for the healthcheck use case.
 func NewHandler(uc healthcheck.UseCase) *Handler {
 	return &Handler{useCase: uc}
 }
 
-// Get implements the use case interface
+// Get implements the use case interface.
 func (h *Handler) Get(c echo.Context) error {
 	if err := h.useCase.Get(context.Background()); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
