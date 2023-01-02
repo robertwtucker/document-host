@@ -65,6 +65,7 @@ func Execute() {
 	}
 }
 
+//nolint:gochecknoinits // Required for proper Cobra initialization.
 func init() {
 	cobra.OnInitialize(initConfig)
 

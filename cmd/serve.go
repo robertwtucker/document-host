@@ -30,6 +30,7 @@ var serveCmd = &cobra.Command{
 	},
 }
 
+//nolint:gochecknoinits // Required for proper Cobra initialization.
 func init() {
 	root.Cmd().AddCommand(serveCmd)
 }
