@@ -25,10 +25,10 @@ type DocumentUseCase struct {
 }
 
 // NewDocumentUseCase creates a new instance of the `DocumentUseCase`.
-func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink.Service, cfg *config.Configuration) *DocumentUseCase {
+func NewDocumentUseCase(repo document.Repository, svc shortlink.Service, cfg *config.Configuration) *DocumentUseCase {
 	return &DocumentUseCase{
-		documentRepo: documentRepo,
-		shortLinkSvc: shortLinkSvc,
+		documentRepo: repo,
+		shortLinkSvc: svc,
 		config:       cfg,
 	}
 }
