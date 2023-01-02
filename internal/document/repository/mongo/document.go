@@ -76,7 +76,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	}
 
 	var buffer bytes.Buffer
-	if _, err := bucket.DownloadToStream(fileID, &buffer); err != nil {
+	if _, err = bucket.DownloadToStream(fileID, &buffer); err != nil {
 		log.Errorf("error streaming document from bucket: %v", err)
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (d DocumentRepository) Get(ctx context.Context, id string) (*model.File, er
 	// There can be only one...
 	var file = new(model.File)
 	if cursor.Next(ctx) {
-		if err := cursor.Decode(&file); err != nil {
+		if err = cursor.Decode(&file); err != nil {
 			log.Errorf("error decoding document: %v", err)
 			return nil, err
 		}
