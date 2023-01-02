@@ -5,7 +5,7 @@
 // 'LICENSE' file found in the root of this source code package.
 //
 
-package tinyurl
+package tinyurl_test
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 	"github.com/go-http-utils/headers"
 	"github.com/jarcoal/httpmock"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
+	subject "github.com/robertwtucker/document-host/pkg/shortlink/tinyurl"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,7 +34,7 @@ func TestShorten(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodPost, tinyServiceURL,
+	httpmock.RegisterResponder(http.MethodPost, subject.TinyServiceURL,
 		func(req *http.Request) (*http.Response, error) {
 
 			assert.Equal(t, req.Header.Get(headers.Accept), "application/json")
@@ -42,7 +43,7 @@ func TestShorten(t *testing.T) {
 
 			var reqBody = &shortLinkRequestBody{}
 			err := json.NewDecoder(req.Body).Decode(&reqBody)
-			defer req.Body.Close()
+			defer func() { _ = req.Body.Close }()
 
 			assert.NoError(t, err, "error decoding request")
 			assert.Equal(t, reqBody.URL, url)
@@ -64,7 +65,7 @@ func TestShorten(t *testing.T) {
 		},
 	)
 
-	svc := NewTinyURLService(apiKey, domain)
+	svc := subject.NewTinyURLService(apiKey, domain)
 	svcRequest := &shortlink.ServiceRequest{URL: url}
 	svcResponse := svc.Shorten(context.Background(), svcRequest)
 

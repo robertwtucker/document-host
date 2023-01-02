@@ -5,7 +5,7 @@
 // 'LICENSE' file found in the root of this source code package.
 //
 
-package usecase
+package usecase_test
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 
 	"github.com/robertwtucker/document-host/internal/config"
 	"github.com/robertwtucker/document-host/internal/document/mocks"
+	subject "github.com/robertwtucker/document-host/internal/document/usecase"
 	"github.com/robertwtucker/document-host/pkg/model"
 	"github.com/robertwtucker/document-host/pkg/shortlink"
 	slmocks "github.com/robertwtucker/document-host/pkg/shortlink/mocks"
@@ -54,7 +55,7 @@ func TestCreate(t *testing.T) {
 	cfg := new(config.Configuration)
 	cfg.App.URL = TestAppURL
 
-	uc := NewDocumentUseCase(repo, svc, cfg)
+	uc := subject.NewDocumentUseCase(repo, svc, cfg)
 	doc, err := uc.Create(context.Background(), repoIn)
 	if assert.NoError(t, err) {
 		assert.Equal(t, doc.ShortLink, TestShortLink)
@@ -79,7 +80,7 @@ func TestGet(t *testing.T) {
 	cfg := new(config.Configuration)
 	cfg.App.URL = TestAppURL
 
-	uc := NewDocumentUseCase(repo, svc, cfg)
+	uc := subject.NewDocumentUseCase(repo, svc, cfg)
 	out, err := uc.Get(context.Background(), id)
 	if assert.NoError(t, err) {
 		assert.Equal(t, out.Filename, "test.pdf")
