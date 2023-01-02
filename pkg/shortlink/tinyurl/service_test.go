@@ -34,7 +34,7 @@ func TestShorten(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
-	httpmock.RegisterResponder(http.MethodPost, tinyurl.TinyServiceURL,
+	httpmock.RegisterResponder(http.MethodPost, tinyurl.ServiceURL,
 		func(req *http.Request) (*http.Response, error) {
 			assert.Equal(t, req.Header.Get(headers.Accept), "application/json")
 			assert.Equal(t, req.Header.Get(headers.Authorization), "Bearer "+apiKey)

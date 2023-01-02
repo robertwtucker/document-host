@@ -20,25 +20,25 @@ import (
 	"github.com/robertwtucker/document-host/pkg/shortlink"
 )
 
-// TinyServiceURL is the API endpoint.
-const TinyServiceURL = "https://api.tinyurl.com/create"
+// ServiceURL is the API endpoint.
+const ServiceURL = "https://api.tinyurl.com/create"
 
-// serviceTimeout is the timeout (in seconds) for requests to the TinyServiceURL API.
-const serviceTimeout = 5
+// ServiceTimeout is the timeout (in seconds) for requests to the TinyURL API.
+var ServiceTimeout = 3
 
-// TinyURLService is the short link generation service implementation for TinyURL.
-type TinyURLService struct {
+// Service is the short link generation service implementation for TinyURL.
+type Service struct {
 	APIKey     string
 	Domain     string
 	ServiceURL string
 }
 
 // NewTinyURLService returns a new instance of the TinyURL short link service.
-func NewTinyURLService(apiKey string, domain string) *TinyURLService {
-	return &TinyURLService{
+func NewTinyURLService(apiKey string, domain string) *Service {
+	return &Service{
 		APIKey:     apiKey,
 		Domain:     domain,
-		ServiceURL: TinyServiceURL,
+		ServiceURL: ServiceURL,
 	}
 }
 
@@ -59,12 +59,12 @@ type tinyURLData struct {
 }
 
 // Shorten implements the Short Link generation service interface.
-func (ts TinyURLService) Shorten(_ context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
+func (ts Service) Shorten(ctx context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
 		"domain": ts.Domain},
 	)
-	request, err := http.NewRequest(http.MethodPost, ts.ServiceURL, bytes.NewBuffer(postBody))
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, ts.ServiceURL, bytes.NewBuffer(postBody))
 	if err != nil {
 		return nil
 	}
@@ -72,7 +72,7 @@ func (ts TinyURLService) Shorten(_ context.Context, req *shortlink.ServiceReques
 	request.Header.Set(headers.Authorization, "Bearer "+ts.APIKey)
 	request.Header.Set(headers.ContentType, "application/json")
 
-	client := &http.Client{Timeout: time.Second * serviceTimeout}
+	client := &http.Client{Timeout: time.Second * time.Duration(ServiceTimeout)}
 	response, err := client.Do(request)
 	if err != nil {
 		return nil
