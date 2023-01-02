@@ -60,6 +60,7 @@ var (
 
 // PrettyPrint outputs a formatted listing of the configuration settings.
 func (c Configuration) PrettyPrint() {
+	//nolint:forbidigo  // Not a debug statement.
 	p := fmt.Println
 	_, _ = p("Configuration Settings:")
 	_, _ = p("App:")
