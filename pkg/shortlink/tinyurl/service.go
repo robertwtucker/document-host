@@ -20,17 +20,17 @@ import (
 	"github.com/robertwtucker/document-host/pkg/shortlink"
 )
 
-// tinyServiceURL is the API endpoint
+// tinyServiceURL is the API endpoint.
 const tinyServiceURL = "https://api.tinyurl.com/create"
 
-// tinyURLService is the short link generation service implementation for TinyURL
+// tinyURLService is the short link generation service implementation for TinyURL.
 type tinyURLService struct {
 	APIKey     string
 	Domain     string
 	ServiceURL string
 }
 
-// NewTinyURLService returns a new instance of the TinyURL short link service
+// NewTinyURLService returns a new instance of the TinyURL short link service.
 func NewTinyURLService(apiKey string, domain string) *tinyURLService { //nolint
 	return &tinyURLService{
 		APIKey:     apiKey,
@@ -39,14 +39,14 @@ func NewTinyURLService(apiKey string, domain string) *tinyURLService { //nolint
 	}
 }
 
-// tinyURLServiceResponse represents the response payload expected from the TinyURL service
+// tinyURLServiceResponse represents the response payload expected from the TinyURL service.
 type tinyURLServiceResponse struct {
 	Data   tinyURLData   `json:"data"`
 	Code   int           `json:"code"`
 	Errors []interface{} `json:"errors,omitempty"`
 }
 
-// tinyURLData represents the TinyURL service's data payload
+// tinyURLData represents the TinyURL service's data payload.
 type tinyURLData struct {
 	URL     string        `json:"url"`
 	Domain  string        `json:"domain"`
@@ -55,7 +55,7 @@ type tinyURLData struct {
 	TinyURL string        `json:"tiny_url"`
 }
 
-// Shorten implements the Short Link generation service interface
+// Shorten implements the Short Link generation service interface.
 func (ts tinyURLService) Shorten(_ context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
@@ -93,7 +93,7 @@ func (ts tinyURLService) Shorten(_ context.Context, req *shortlink.ServiceReques
 	return toShortLink(tinyResponse)
 }
 
-// toShortLink is a utility function that converts the TinyURL response to the standard form
+// toShortLink is a utility function that converts the TinyURL response to the standard form.
 func toShortLink(tiny *tinyURLServiceResponse) *shortlink.ServiceResponse {
 	return &shortlink.ServiceResponse{
 		URL:       tiny.Data.URL,

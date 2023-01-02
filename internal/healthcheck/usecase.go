@@ -11,7 +11,7 @@ import (
 	"context"
 )
 
-// UseCase defines the operations supported by the document resource
+// UseCase defines the operations supported by the document resource.
 type UseCase interface {
 	Get(ctx context.Context) error
 }

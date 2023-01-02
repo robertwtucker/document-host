@@ -11,7 +11,7 @@ import (
 	"github.com/robertwtucker/document-host/internal/healthcheck"
 )
 
-// RegisterHTTPHandlers maps the handler for the health check endpoint
+// RegisterHTTPHandlers maps the handler for the health check endpoint.
 func RegisterHTTPHandlers(e *echo.Echo, uc healthcheck.UseCase) {
 	h := NewHandler(uc)
 	e.GET("/health", h.Get)

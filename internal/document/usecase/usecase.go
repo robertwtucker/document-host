@@ -17,14 +17,14 @@ import (
 	"github.com/robertwtucker/document-host/pkg/shortlink"
 )
 
-// DocumentUseCase is the concrete implementation the use cases for the document repository
+// DocumentUseCase is the concrete implementation the use cases for the document repository.
 type DocumentUseCase struct {
 	documentRepo document.Repository
 	shortLinkSvc shortlink.Service
 	config       *config.Configuration
 }
 
-// NewDocumentUseCase creates a new instance of the `DocumentUseCase`
+// NewDocumentUseCase creates a new instance of the `DocumentUseCase`.
 func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink.Service, cfg *config.Configuration) *DocumentUseCase {
 	return &DocumentUseCase{
 		documentRepo: documentRepo,
@@ -33,7 +33,7 @@ func NewDocumentUseCase(documentRepo document.Repository, shortLinkSvc shortlink
 	}
 }
 
-// Create implements the use case interface
+// Create implements the use case interface.
 func (d DocumentUseCase) Create(ctx context.Context, doc *model.Document) (*model.Document, error) {
 	doc, err := d.documentRepo.Create(ctx, doc)
 	if err != nil {
@@ -49,7 +49,7 @@ func (d DocumentUseCase) Create(ctx context.Context, doc *model.Document) (*mode
 	return doc, nil
 }
 
-// Get implements the use case interface
+// Get implements the use case interface.
 func (d DocumentUseCase) Get(ctx context.Context, id string) (*model.File, error) {
 	return d.documentRepo.Get(ctx, id)
 }

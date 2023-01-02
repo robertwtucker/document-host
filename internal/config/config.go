@@ -12,10 +12,10 @@ import (
 	"fmt"
 )
 
-// AppName represents the name of the application
+// AppName represents the name of the application.
 const AppName = "docuhost"
 
-// Configuration represents the application configuration settings
+// Configuration represents the application configuration settings.
 type Configuration struct {
 	App struct {
 		URL     string `mapstructure:"url"`
@@ -44,13 +44,13 @@ type Configuration struct {
 	} `mapstructure:"shortlink"`
 }
 
-// VersionInfo represents the application's latest version tag and Git revision
+// VersionInfo represents the application's latest version tag and Git revision.
 type VersionInfo struct {
 	Version  string `mapstructure:"version"`
 	Revision string `mapstructure:"revision"`
 }
 
-// AppVersion returns the application's latest version and Git revision
+// AppVersion returns the application's latest version and Git revision.
 func AppVersion() VersionInfo { return VersionInfo{Version: appVersion, Revision: revision} }
 
 var (
@@ -58,7 +58,7 @@ var (
 	revision   = "unknown"
 )
 
-// PrettyPrint outputs a formatted listing of the configuration settings
+// PrettyPrint outputs a formatted listing of the configuration settings.
 func (c Configuration) PrettyPrint() {
 	p := fmt.Println
 	_, _ = p("Configuration Settings:")
@@ -83,7 +83,7 @@ func (c Configuration) PrettyPrint() {
 	_, _ = p("  Domain:  ", c.ShortLink.Domain)
 }
 
-// String displays the configuration settings
+// String displays the configuration settings.
 func (c Configuration) String() string {
 	out, err := json.Marshal(c)
 	if err != nil {
@@ -92,12 +92,12 @@ func (c Configuration) String() string {
 	return string(out)
 }
 
-// String returns a formatted form of the version and revision
+// String returns a formatted form of the version and revision.
 func (v VersionInfo) String() string {
 	return fmt.Sprintf("%s-%s", v.Version, v.Revision)
 }
 
-// Setting keys
+// Setting keys.
 const (
 	AppURLKey          = "app.url"
 	AppVersionKey      = "app.version"
@@ -116,7 +116,7 @@ const (
 	ShortLinkDomainKey = "shortlink.domain"
 )
 
-// Environment variables
+// Environment variables.
 const (
 	AppURLEnv          = "APP_URL"
 	DBPrefixEnv        = "DB_PREFIX"

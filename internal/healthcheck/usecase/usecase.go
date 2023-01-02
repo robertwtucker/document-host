@@ -14,17 +14,17 @@ import (
 	"github.com/robertwtucker/document-host/internal/healthcheck"
 )
 
-// HealthCheckUseCase is the concrete implementation the use cases for the document repository
+// HealthCheckUseCase is the concrete implementation the use cases for the document repository.
 type HealthCheckUseCase struct {
 	helper healthcheck.DatabaseHelper
 }
 
-// NewHealthCheckUseCase creates a new instance of the `HealthCheckUseCase`
+// NewHealthCheckUseCase creates a new instance of the `HealthCheckUseCase`.
 func NewHealthCheckUseCase(dbh healthcheck.DatabaseHelper) *HealthCheckUseCase {
 	return &HealthCheckUseCase{helper: dbh}
 }
 
-// Get implements the use case interface
+// Get implements the use case interface.
 func (h HealthCheckUseCase) Get(ctx context.Context) error {
 	// Set a short timeout (default readiness timeout is usually only a second)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*750)

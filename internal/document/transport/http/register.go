@@ -11,7 +11,7 @@ import (
 	"github.com/robertwtucker/document-host/internal/document"
 )
 
-// RegisterHTTPHandlers maps the handlers for the document resource use cases
+// RegisterHTTPHandlers maps the handlers for the document resource use cases.
 func RegisterHTTPHandlers(e *echo.Echo, uc document.UseCase) {
 	h := NewHandler(uc)
 	r := e.Group("/v1")

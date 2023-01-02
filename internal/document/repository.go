@@ -13,7 +13,7 @@ import (
 	"github.com/robertwtucker/document-host/pkg/model"
 )
 
-// Repository defines the operations supported by the document repository
+// Repository defines the operations supported by the document repository.
 type Repository interface {
 	Create(ctx context.Context, doc *model.Document) (*model.Document, error)
 	Get(ctx context.Context, id string) (*model.File, error)

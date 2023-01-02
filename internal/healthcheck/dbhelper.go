@@ -9,7 +9,7 @@ package healthcheck
 
 import "context"
 
-// DatabaseHelper defines the operations supported by the healthcheck resource
+// DatabaseHelper defines the operations supported by the healthcheck resource.
 type DatabaseHelper interface {
 	CheckDB(ctx context.Context) error
 }

@@ -7,7 +7,7 @@
 
 package model
 
-// Document represents the document file and its metadata
+// Document represents the document file and its metadata.
 type Document struct {
 	ID          string `json:"id,omitempty"`
 	Filename    string `json:"filename" validate:"required"`
