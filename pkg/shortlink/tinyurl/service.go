@@ -23,6 +23,9 @@ import (
 // TinyServiceURL is the API endpoint.
 const TinyServiceURL = "https://api.tinyurl.com/create"
 
+// serviceTimeout is the timeout (in seconds) for requests to the TinyServiceURL API.
+const serviceTimeout = 5
+
 // TinyURLService is the short link generation service implementation for TinyURL.
 type TinyURLService struct {
 	APIKey     string
@@ -69,7 +72,7 @@ func (ts TinyURLService) Shorten(_ context.Context, req *shortlink.ServiceReques
 	request.Header.Set(headers.Authorization, "Bearer "+ts.APIKey)
 	request.Header.Set(headers.ContentType, "application/json")
 
-	client := &http.Client{Timeout: time.Second * 5}
+	client := &http.Client{Timeout: time.Second * serviceTimeout}
 	response, err := client.Do(request)
 	if err != nil {
 		return nil
