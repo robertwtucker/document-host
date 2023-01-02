@@ -37,7 +37,7 @@ func (h *Handler) Create(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	c.Response().Header().Set(echo.HeaderLocation, result.URL)
-	return c.JSON(201, result)
+	return c.JSON(http.StatusCreated, result)
 }
 
 // Get implements the use case interface.
