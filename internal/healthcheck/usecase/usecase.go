@@ -27,7 +27,8 @@ func NewHealthCheckUseCase(dbh healthcheck.DatabaseHelper) *HealthCheckUseCase {
 // Get implements the use case interface.
 func (h HealthCheckUseCase) Get(ctx context.Context) error {
 	// Set a short timeout (default readiness timeout is usually only a second)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*750)
+	const timeoutMillis = 750
+	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*timeoutMillis)
 	defer cancel()
 
 	return h.helper.CheckDB(ctx)
