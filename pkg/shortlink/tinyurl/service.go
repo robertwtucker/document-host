@@ -20,22 +20,22 @@ import (
 	"github.com/robertwtucker/document-host/pkg/shortlink"
 )
 
-// tinyServiceURL is the API endpoint.
-const tinyServiceURL = "https://api.tinyurl.com/create"
+// TinyServiceURL is the API endpoint.
+const TinyServiceURL = "https://api.tinyurl.com/create"
 
-// tinyURLService is the short link generation service implementation for TinyURL.
-type tinyURLService struct {
+// TinyURLService is the short link generation service implementation for TinyURL.
+type TinyURLService struct {
 	APIKey     string
 	Domain     string
 	ServiceURL string
 }
 
 // NewTinyURLService returns a new instance of the TinyURL short link service.
-func NewTinyURLService(apiKey string, domain string) *tinyURLService { //nolint
-	return &tinyURLService{
+func NewTinyURLService(apiKey string, domain string) *TinyURLService {
+	return &TinyURLService{
 		APIKey:     apiKey,
 		Domain:     domain,
-		ServiceURL: tinyServiceURL,
+		ServiceURL: TinyServiceURL,
 	}
 }
 
@@ -56,7 +56,7 @@ type tinyURLData struct {
 }
 
 // Shorten implements the Short Link generation service interface.
-func (ts tinyURLService) Shorten(_ context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
+func (ts TinyURLService) Shorten(_ context.Context, req *shortlink.ServiceRequest) *shortlink.ServiceResponse {
 	postBody, _ := json.Marshal(map[string]string{
 		"url":    req.URL,
 		"domain": ts.Domain},
