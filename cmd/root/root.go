@@ -33,9 +33,7 @@ short link returned in the upload response.
 		if err := viper.UnmarshalExact(&Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
 		}
-		if err := initLog(Config); err != nil {
-			return errors.Wrapf(err, "failed to initialize logging")
-		}
+		initLog(Config)
 		logrus.WithField("version", Config.App.Version).Debug("initialized")
 		return nil
 	},
@@ -129,7 +127,7 @@ func initConfig() {
 	viper.Set(config.AppVersionKey, config.AppVersion().String())
 }
 
-func initLog(cfg *config.Configuration) error {
+func initLog(cfg *config.Configuration) {
 	if strings.ToLower(cfg.Log.Format) == "json" {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
@@ -140,6 +138,4 @@ func initLog(cfg *config.Configuration) error {
 	}
 	log.SetOutput(logrus.New().Writer())
 	log.SetFlags(0)
-
-	return nil
 }
