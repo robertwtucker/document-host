@@ -9,10 +9,12 @@ package api
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"strings"
 	"syscall"
 	"time"
@@ -63,7 +65,7 @@ func NewApp(cfg *config.Configuration) (*App, error) {
 	// Initialize MongoDB
 	db, err := initDB(cfg)
 	if err != nil {
-		return nil, fmt.Errorf("error initializing db: %v", err)
+		return nil, fmt.Errorf("error initializing db: %w", err)
 	}
 	log.Debugf("connection to %s db initialized", db.Name())
 
@@ -118,7 +120,7 @@ func (a *App) Run() {
 	go func() {
 		log.Debug("starting the server")
 		err := e.Start(":" + a.config.Server.Port)
-		if err != nil && err != http.ErrServerClosed {
+		if err != nil && errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("shutting down the server: %+v", err)
 		}
 	}()
@@ -132,7 +134,8 @@ func (a *App) Run() {
 		context.Background(), time.Duration(a.config.Server.Timeout)*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		runtime.Goexit()
 	}
 }
 
@@ -167,7 +170,7 @@ func initDB(cfg *config.Configuration) (*mongo.Database, error) {
 	defer cancel()
 
 	// Create connection using the timeout context.
-	if err := client.Connect(ctx); err != nil {
+	if err = client.Connect(ctx); err != nil {
 		log.Errorf("error connecting client: %+v", err)
 		return nil, err
 	}
