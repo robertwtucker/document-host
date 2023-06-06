@@ -31,7 +31,7 @@ build-mac:
 	chmod +x bin/server
 
 docker:
-	docker build -t ${IMAGE}:latest -t ${IMAGE}:${VERSION} -t ${IMAGE}:${VERSION}-${REVISION} \
+	docker build -t ${IMAGE}:latest -t ${IMAGE}:${VERSION} \
 		--build-arg BUILD_VERSION=${VERSION} --build-arg BUILD_REVISION=${REVISION} .
 run:
 	go run ./cmd/server/main.go
