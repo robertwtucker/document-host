@@ -157,12 +157,8 @@ func initDB(cfg *config.Configuration) (*mongo.Database, error) {
 	uri := fmt.Sprintf("%s://%s:%d", cfg.DB.Prefix, cfg.DB.Host, cfg.DB.Port)
 	log.Debugf("creating db client for %s.%s@%s:%d",
 		authSource, authUser, cfg.DB.Host, cfg.DB.Port)
+
 	opts := options.Client().ApplyURI(uri).SetAuth(credential)
-	client, err := mongo.NewClient(opts)
-	if err != nil {
-		log.Errorf("error creating db client: %+v", err)
-		return nil, err
-	}
 
 	// Set a timeout for blocking functions.
 	ctx, cancel := context.WithTimeout(context.Background(),
@@ -170,13 +166,14 @@ func initDB(cfg *config.Configuration) (*mongo.Database, error) {
 	defer cancel()
 
 	// Create connection using the timeout context.
-	if err = client.Connect(ctx); err != nil {
-		log.Errorf("error connecting client: %+v", err)
+	client, err := mongo.Connect(ctx, opts)
+	if err != nil {
+		log.Errorf("error creating db client: %+v", err)
 		return nil, err
 	}
 
 	log.Debug("validating connection to db (ping)")
-	err = client.Ping(context.Background(), nil)
+	err = client.Ping(ctx, nil)
 	if err != nil {
 		log.Errorf("error connecting to db: %+v", err)
 		return nil, err
