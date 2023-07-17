@@ -1,14 +1,19 @@
 # Document Host
 
+![Release](https://img.shields.io/github/v/tag/robertwtucker/document-host?label=release)
+![License](https://img.shields.io/github/license/robertwtucker/document-host)
+![Open issues](https://img.shields.io/github/issues-raw/robertwtucker/document-host)
+![Open pull requests](https://img.shields.io/github/issues-pr-raw/robertwtucker/document-host)
+
 The Document Host (Docuhost) service provides a REST endpoint to upload demo-generated documents for temporary storage. Documents can be retrieved via the short link returned in the upload response.
 
 ## Getting Started
 
 ### Prerequisites
 
-* Kubernetes 1.21+
-* Helm 3.1+
-* MongoDB 4.4+
+-   Kubernetes 1.21+
+-   Helm 3.1+
+-   MongoDB 4.4+
 
 The application is designed to be installed in [Kubernetes](https://kubernetes.io) using a [Helm](https://helm.sh) chart. Files are stored in [MongoDB](https://www.mongodb.com) using [GridFS](https://docs.mongodb.com/v4.4/core/gridfs) so, prior to deployment, an instance of MongoDB 4.4.x is required (tested with v4.4.12).
 
@@ -18,7 +23,7 @@ The chart is available via the [SPT Chart Library](https://github.com/robertwtuc
 
 To install the chart with the release name `docuhost`:
 
-``` bash
+```bash
 $ cd charts
 $ helm upgrade --install docuhost ./docuhost --namespace=demo-prod \
     --set db.user=admin,db.password=s3cr3t
@@ -32,7 +37,7 @@ A sample request and response are provided below.
 
 #### Sample Request
 
-``` json
+```json
 HTTP POST /v1/documents
 {
   "filename": "simple.pdf",
@@ -43,13 +48,13 @@ HTTP POST /v1/documents
 
 #### Sample Response
 
-``` json
+```json
 {
-  "id": "61f0023ee260d827b7156c55",
-  "filename": "simple.pdf",
-  "contentType": "application/pdf",
-  "url": "http://docuhost.localdev/v1/documents/61f0023ee260d827b7156c55",
-  "shortLink": "https://tiny.one/yckaxkhv"
+    "id": "61f0023ee260d827b7156c55",
+    "filename": "simple.pdf",
+    "contentType": "application/pdf",
+    "url": "http://docuhost.localdev/v1/documents/61f0023ee260d827b7156c55",
+    "shortLink": "https://tiny.one/yckaxkhv"
 }
 ```
 
