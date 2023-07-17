@@ -15,4 +15,4 @@ log:
   debug: false
 shortlink:
   apikey: ${SHORTLINK_APIKEY}
-  domain: tiny.one
+  domain: tinyurl.com
