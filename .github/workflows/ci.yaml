@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    branches-ignore:
+      - next-docuhost
   pull_request:
 permissions:
   contents: read
