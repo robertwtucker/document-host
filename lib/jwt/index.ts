@@ -5,9 +5,21 @@
 
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import type { NextRequest } from 'next/server'
-import type { JWT } from './types'
 
-export * from './types'
+/**
+ * Default contents of the Auth0 access token.
+ */
+export interface DefaultJWT extends Record<string, unknown> {
+  iss?: string | null
+  sub?: string | null
+  aud?: string | string[] | null
+  scope?: string | string[] | null
+}
+
+/**
+ * Returned by the `verifyToken` function as the decoded payload.
+ */
+export interface JWT extends Record<string, unknown>, DefaultJWT {}
 
 /**
  *
