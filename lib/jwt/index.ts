@@ -28,7 +28,7 @@ export interface JWT extends Record<string, unknown>, DefaultJWT {}
  */
 export async function verifyToken(req: NextRequest): Promise<JWT | null> {
   const jwks = createRemoteJWKSet(
-    new URL(`${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`)
+    new URL(`https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`)
   )
   const requiredClaims = ['scope']
 
@@ -46,7 +46,7 @@ export async function verifyToken(req: NextRequest): Promise<JWT | null> {
   try {
     const { payload } = await jwtVerify(token, jwks, {
       audience: process.env.AUTH0_AUDIENCE,
-      issuer: `${process.env.AUTH0_DOMAIN}/`,
+      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
       requiredClaims: requiredClaims,
     })
     return payload
