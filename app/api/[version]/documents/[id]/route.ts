@@ -30,10 +30,7 @@ function streamData(file: HostedFile): ReadableStream<Uint8Array> {
 
 export async function GET(req: NextRequest, context: { params: Params }) {
   const { version, id } = context.params
-  if (
-    version.startsWith('v') &&
-    (version.endsWith('1') || version.endsWith('2'))
-  ) {
+  if (version && version.match(new RegExp('^v[1-2]'))) {
     try {
       isValidObjectId(id)
     } catch (err) {

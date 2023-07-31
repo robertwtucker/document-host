@@ -12,10 +12,7 @@ type Params = {
 
 export async function POST(req: NextRequest, context: { params: Params }) {
   const { version } = context.params
-  if (
-    version.startsWith('v') &&
-    (version.endsWith('1') || version.endsWith('2'))
-  ) {
+  if (version && version.match(new RegExp('^v[1-2]'))) {
     const token = await verifyToken(req)
     if (token && token.scope?.includes('create:documents')) {
       const payload = await req.json()
