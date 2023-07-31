@@ -3,17 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import NextAuth from 'next-auth/next'
 import Auth0Provider from 'next-auth/providers/auth0'
 
-export const authOptions: NextAuthOptions = {
+export default NextAuth({
   providers: [
     Auth0Provider({
-      clientId: process.env.AUTH0_ID ?? '',
-      clientSecret: process.env.AUTH0_SECRET ?? '',
-      issuer: process.env.AUTH0_ISSUER ?? '',
+      clientId: process.env.AUTH0_CLIENT_ID ?? '',
+      clientSecret: process.env.AUTH0_CLIENT_SECRET ?? '',
+      issuer: process.env.AUTH0_DOMAIN ?? '',
     }),
   ],
-}
-
-export default NextAuth(authOptions)
+})
