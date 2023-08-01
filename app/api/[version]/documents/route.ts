@@ -24,16 +24,21 @@ export async function POST(req: NextRequest, context: { params: Params }) {
         if (shortened && shortened.shortlink) {
           document.shortLink = shortened.shortlink
         }
-        return NextResponse.json(
-          { document },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Location: document.url,
-            },
-            status: 201,
-          }
-        )
+
+        let versionedResponse = {}
+        if (version === 'v1') {
+          versionedResponse = document
+        } else {
+          versionedResponse = { document }
+        }
+
+        return NextResponse.json(versionedResponse, {
+          headers: {
+            'Content-Type': 'application/json',
+            Location: document.url,
+          },
+          status: 201,
+        })
       } else {
         return new NextResponse(null, { status: 500 })
       }
