@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ShortlinkResponse } from './types'
 import { createShortlink } from './tinyurl'
 // import { createShortlink } from './bitly'
 
-export * from './types'
+export interface ShortlinkResponse {
+  url: string
+  shortlink?: string
+}
 
 export async function shorten(url: string): Promise<ShortlinkResponse> {
   return await createShortlink(url)

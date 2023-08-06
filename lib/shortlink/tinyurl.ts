@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ShortlinkResponse } from './types'
+import { ShortlinkResponse } from './'
 
 type TinyUrlResponse = {
   data: {
