@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
-	github.com/go-playground/validator/v10 v10.15.0
+	github.com/go-playground/validator/v10 v10.15.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/labstack/echo/v4 v4.11.1
 	github.com/pkg/errors v0.9.1
