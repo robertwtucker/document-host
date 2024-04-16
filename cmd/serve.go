@@ -20,7 +20,7 @@ var serveCmd = &cobra.Command{
 	Short: "starts the API server",
 	Long: `Starts the HTTP(S) server on the configured port and exposes the API endpoints
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		log.WithField("server", root.Config.Server).Debug("starting API server")
 		app, err := api.NewApp(root.Config)
 		if err != nil {
