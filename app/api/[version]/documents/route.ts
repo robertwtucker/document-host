@@ -1,4 +1,5 @@
 /**
+ * Copyright (c) 2023 Quadient Group AG
  * SPDX-License-Identifier: MIT
  */
 
