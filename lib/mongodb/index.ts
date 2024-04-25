@@ -7,9 +7,10 @@ import { MongoClient, ServerApiVersion } from 'mongodb'
 
 const username = encodeURIComponent(process.env.MONGODB_USERNAME as string)
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD as string)
-const uri = `mongodb://${username}:${password}@${
-  process.env.MONGODB_HOST as string
-}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
+let uri = `mongodb://${username}:${password}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
+username.toLowerCase() === 'root'
+  ? (uri += `?authSource=admin`)
+  : (uri += `?authSource=${process.env.MONGODB_DATABASE}`)
 const options = {
   serverApi: {
     version: ServerApiVersion.v1,
