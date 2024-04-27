@@ -4,6 +4,9 @@ on:
     branches-ignore:
       - docuhost-v0.3
   pull_request:
+env:
+  MONGODB_HOST: localhost
+  MONGODB_PORT: 27017
 jobs:
   build:
     runs-on: ubuntu-latest
