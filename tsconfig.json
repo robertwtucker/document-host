@@ -20,17 +20,9 @@
       }
     ],
     "paths": {
-      "@/app/*": ["./app/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/*": ["./*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.js",
-    "**/*.mjs",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
