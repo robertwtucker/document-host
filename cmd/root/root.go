@@ -28,7 +28,7 @@ var rootCmd = &cobra.Command{
 demo-generated documents for temporary storage. Documents can be retrieved via the
 short link returned in the upload response.
 `,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+	PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
 		Config = &config.Configuration{}
 		if err := viper.UnmarshalExact(&Config); err != nil {
 			return errors.Wrapf(err, "failed to unmarshal config")
