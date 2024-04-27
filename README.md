@@ -11,50 +11,89 @@ The Document Host (Docuhost) service provides a REST endpoint to upload demo-gen
 
 ### Prerequisites
 
--   Kubernetes 1.21+
--   Helm 3.1+
--   MongoDB 4.4+
+- Kubernetes 1.21+
+- Helm 3.1+
+- MongoDB 6.0+
+- [Auth0](https://auth0.com) account (v0.4.0+)
 
-The application is designed to be installed in [Kubernetes](https://kubernetes.io) using a [Helm](https://helm.sh) chart. Files are stored in [MongoDB](https://www.mongodb.com) using [GridFS](https://docs.mongodb.com/v4.4/core/gridfs) so, prior to deployment, an instance of MongoDB 4.4.x is required (tested with v4.4.12).
+The application is designed to be installed in [Kubernetes](https://kubernetes.io) using a [Helm](https://helm.sh) chart. Files are stored in [MongoDB](https://www.mongodb.com) using [GridFS](https://mongodb.com/docs/manual/core/gridfs/) so, prior to deployment, an instance of MongoDB 6.0.x is required (tested with v6.0.13).
 
 ### Installation
 
-The chart is available via the [SPT Chart Library](https://github.com/robertwtucker/spt-charts). See the [instructions](https://github.com/robertwtucker/spt-charts#getting-started) in that repository for steps to clone the library.
+A chart is available via the [SPT Chart Library](https://github.com/robertwtucker/spt-charts/docuhost). See the [instructions](https://github.com/robertwtucker/spt-charts#getting-started) in that repository for steps to clone the library.
 
 To install the chart with the release name `docuhost`:
 
 ```bash
 $ cd charts
-$ helm upgrade --install docuhost ./docuhost --namespace=demo-prod \
-    --set db.user=admin,db.password=s3cr3t
+$ helm upgrade --install docuhost ./docuhost \
+    --namespace=spt-prod \
+    --set db.user=admin \
+    --set db.password=s3cr3t \
+    ... # See chart for other configuration values
 ```
 
-These commands deploy Docuhost to the Kubernetes cluster in the `demo-prod` namespace. The parameters for the database username and password are set to `admin` and `s3cr3t`, respectively. See the [Parameters](https://github.com/robertwtucker/spt-charts/tree/master/docuhost#parameters) section of the [README](https://github.com/robertwtucker/spt-charts/tree/master/docuhost) for a list of the parameters that can/need to be configured for a successful installation.
+These commands deploy Docuhost to the Kubernetes cluster in the `spt-prod` namespace. The parameters for the database username and password are set to `admin` and `s3cr3t`, respectively. See the [Parameters](https://github.com/robertwtucker/spt-charts/tree/master/docuhost#parameters) section of the [README](https://github.com/robertwtucker/spt-charts/tree/master/docuhost) for a list of the parameters that can/need to be configured for a successful installation.
 
 ### Usage
 
-A sample request and response are provided below.
+Since v0.4.0, adding documents to Docuhost is secured using a Bearer token in the HTTP Authorization header. The current implementation uses [Auth0](https://auth0.com) as the sole authentication provider. A future version may use [Auth.js](https://authjs.dev) (once their v5 library has been released) to allow for configurable authentication providers.
 
-#### Sample Request
+To set up authentication in Auth0:
+
+1. Under the _Applications_ menu, create a new _API_ with the name of your choosing using the identifier `urn:docuhost`.
+2. In the _Permissions_ tab, add a `create:documents` permission.
+3. Create a new Machine to Machine type _Application_ for your API making sure to select the permission created in the previous step.
+4. Follow the instructions in the _QuickStart_ tab to obtain and use the token.
+
+Sample requests and responses are provided below.
+
+#### v0.4+
 
 ```json
+# Request
+
+Authorization: Bearer <API-Token>
+HTTP POST /api/v2/documents
+{
+  "filename": "simple.pdf",
+  "contentType": "application/pdf",
+  "fileBase64": "JVBERi0xLjc[...]zd="
+}
+
+# Response
+
+{
+  "document": {
+    "id": "61f0023ee260d827b7156c55",
+    "filename": "simple.pdf",
+    "contentType": "application/pdf",
+    "url": "http://docuhost.localdev/api/v2/documents/61f0023ee260d827b7156c55",
+    "shortLink": "https://tinyurl.com/k4ius98"
+  }
+}
+```
+
+#### v0.3.21 and lower
+
+```json
+# Request
+
 HTTP POST /v1/documents
 {
   "filename": "simple.pdf",
   "contentType": "application/pdf",
   "fileBase64": "JVBERi0xLjc[...]zd="
 }
-```
 
-#### Sample Response
+# Response
 
-```json
 {
-    "id": "61f0023ee260d827b7156c55",
-    "filename": "simple.pdf",
-    "contentType": "application/pdf",
-    "url": "http://docuhost.localdev/v1/documents/61f0023ee260d827b7156c55",
-    "shortLink": "https://tiny.one/yckaxkhv"
+  "id": "61f0023ee260d827b7156c55",
+  "filename": "simple.pdf",
+  "contentType": "application/pdf",
+  "url": "http://docuhost.localdev/v1/documents/61f0023ee260d827b7156c55",
+  "shortLink": "https://tiny.one/yckaxkhv"
 }
 ```
 
