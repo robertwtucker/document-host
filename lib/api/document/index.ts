@@ -7,12 +7,11 @@ import clientPromise from '@/lib/mongodb'
 import { GridFSBucket, ObjectId } from 'mongodb'
 import { Readable } from 'stream'
 import { HostedDocument, HostedFile } from './types'
+import { logger } from '@/lib/logger'
 
 export * from './types'
 
-export async function insert(
-  document: HostedDocument
-): Promise<HostedDocument | null> {
+export async function insert(document: HostedDocument): Promise<HostedDocument | null> {
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
   const buffer = Buffer.from(document.fileBase64, 'base64')
@@ -47,6 +46,8 @@ export async function find(id: string): Promise<HostedFile | null> {
 
     return hostedFile
   }
+
+  logger.warn(`No content stream found for ${id}`)
   return null
 }
 
