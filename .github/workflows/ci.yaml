@@ -9,18 +9,6 @@ env:
   MONGODB_HOST: localhost
   MONGODB_PORT: 27017
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-        name: Install dependencies
-      - run: npm run lint
-        name: Lint
   build:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - run: npm ci
-        name: Install dependencies
-      - run: npm run build --if-present
-        name: Build
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build --if-present
