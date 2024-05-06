@@ -6,12 +6,20 @@
 import { MongoClient, ServerApiVersion } from 'mongodb'
 import { logger } from '@/lib/logger'
 
-const username = encodeURIComponent(process.env.MONGODB_USERNAME as string)
-const password = encodeURIComponent(process.env.MONGODB_PASSWORD as string)
-let uri = `mongodb://${username}:${password}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`
-username.toLowerCase() === 'root'
-  ? (uri += `?authSource=admin`)
-  : (uri += `?authSource=${process.env.MONGODB_DATABASE}`)
+const config = {
+  protocol: process.env.MONGODB_PROTOCOL || 'mongodb',
+  host: process.env.MONGODB_HOST || 'localhost',
+  port: process.env.MONGODB_PORT || '',
+  database: process.env.MONGODB_DATABASE || 'documents',
+  username: encodeURIComponent(process.env.MONGODB_USERNAME || 'docuhost'),
+  password: encodeURIComponent(process.env.MONGODB_PASSWORD || ''),
+  options: process.env.MONGODB_OPTIONS || '',
+}
+
+let uri = `${config.protocol}://${config.username}:${config.password}@${config.host}`
+uri += `${config.port.length > 0 ? ':' + config.port : ''}/${config.database}`
+uri += `${config.options.length > 0 ? '?' + config.options : ''}`
+
 const options = {
   serverApi: {
     version: ServerApiVersion.v1,
