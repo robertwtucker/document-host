@@ -9,7 +9,6 @@ FROM base AS prod-deps
 RUN --mount=type=cache,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 FROM base AS builder
-COPY .env-docker.local ./
 RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
