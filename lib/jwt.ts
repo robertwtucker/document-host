@@ -5,6 +5,7 @@
 
 import { createRemoteJWKSet, jwtVerify } from 'jose'
 import type { NextRequest } from 'next/server'
+import { logger } from '@/lib/logger'
 
 /**
  * Default contents of the Auth0 access token.
@@ -27,10 +28,7 @@ export interface JWT extends Record<string, unknown>, DefaultJWT {}
  * @returns A decoded JWT object or null if token is invalid/not present
  */
 export async function verifyToken(req: NextRequest): Promise<JWT | null> {
-  const jwks = createRemoteJWKSet(
-    new URL(`https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`)
-  )
-  const requiredClaims = ['scope']
+  const jwks = createRemoteJWKSet(new URL(`${process.env.AUTH_AUTH0_ISSUER}/.well-known/jwks.json`))
 
   let token = ''
   const authorizationHeader = req.headers.get('authorization')
@@ -39,19 +37,15 @@ export async function verifyToken(req: NextRequest): Promise<JWT | null> {
     token = decodeURIComponent(urlEncodedToken)
   }
 
-  if (!token) {
-    return null
-  }
-
   try {
     const { payload } = await jwtVerify(token, jwks, {
-      audience: process.env.AUTH0_AUDIENCE,
-      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-      requiredClaims: requiredClaims,
+      audience: process.env.AUTH_AUTH0_AUDIENCE,
+      issuer: `${process.env.AUTH_AUTH0_ISSUER}/`, // jose expects a trailing slash
+      requiredClaims: ['scope'],
     })
     return payload
   } catch (err) {
-    console.error(err)
+    logger.error(`Error verifying token: ${err}`)
     return null
   }
 }
