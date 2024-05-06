@@ -1,8 +1,3 @@
-/**
- * Copyright (c) 2024 Quadient Group AG
- * SPDX-License-Identifier: MIT
- */
-
 const config = {
   root: true,
   parser: '@typescript-eslint/parser',
