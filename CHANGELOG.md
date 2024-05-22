@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 2024-05-22
+
+### Added
+
+- `eslint` and `prettier` for style enforcement [(#91)](https://github.com/robertwtucker/document-host/pull/91)
+- `next-auth` for additional user authentication [(#86)](https://github.com/robertwtucker/document-host/pull/86)
+- Created project Changelog [(#85)](https://github.com/robertwtucker/document-host/pull/85)
+
+### Changed
+
+- Bumped `mongodb` to v6.6.2 [(#101](https://github.com/robertwtucker/document-host/pull/101),
+  [#94](https://github.com/robertwtucker/document-host/pull/94),
+  [#88)](https://github.com/robertwtucker/document-host/pull/88)
+- Bumped `@types/node` to v20.12.12 [(#100](https://github.com/robertwtucker/document-host/pull/100),
+  [#92](https://github.com/robertwtucker/document-host/pull/92),
+  [#87)](https://github.com/robertwtucker/document-host/pull/87)
+- Bumped `@typescript-eslint/parser` to v7.10.0 [(#99)](https://github.com/robertwtucker/document-host/pull/99)
+- Bumped `@typescript-eslint/eslint-plugin` to v7.10.0 [(#98](https://github.com/robertwtucker/document-host/pull/98),
+  [#93)](https://github.com/robertwtucker/document-host/pull/93)
+- Bumped `jose` to v5.3.0 [(#97)](https://github.com/robertwtucker/document-host/pull/97)
+- Bumped `pnpm` to v9.1.2
+- Bumped `@types/react` to v18.3.2 [(#96)](https://github.com/robertwtucker/document-host/pull/96)
+- Bumped `next-auth` to v5.0.0-beta.18 [(#95)](https://github.com/robertwtucker/document-host/pull/95)
+- Removed environment variables obviated by new mongodb defaults [(#90)](https://github.com/robertwtucker/document-host/pull/90)
+- Reworked mongodb URI creation to allow for Atlas connections [(#86)](https://github.com/robertwtucker/document-host/pull/86)
+
 ## [0.4.1] - 2024-05-03
 
 ### Changed
@@ -259,7 +285,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.1...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/robertwtucker/document-host/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/robertwtucker/document-host/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/robertwtucker/document-host/compare/v0.3.21...v0.4.0
 [0.3.21]: https://github.com/robertwtucker/document-host/compare/v0.3.20...v0.3.21
