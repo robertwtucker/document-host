@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2024-07-24
+
+### Changed
+
+- Bumped `jose` to v5.6.3 ([#141](https://github.com/robertwtucker/document-host/pull/97),
+  [#122](https://github.com/robertwtucker/document-host/pull/122),
+  [#115](https://github.com/robertwtucker/document-host/pull/115))
+- Bumped `eslint-plugin-prettier` to v5.2.1 ([#140](https://github.com/robertwtucker/document-host/pull/140))
+- Bumped `@types/node` to v20.14.11 ([#139](https://github.com/robertwtucker/document-host/pull/139),
+  [#131](https://github.com/robertwtucker/document-host/pull/131),
+  [#124](https://github.com/robertwtucker/document-host/pull/124),
+  [#110](https://github.com/robertwtucker/document-host/pull/110),
+  [#108](https://github.com/robertwtucker/document-host/pull/108))
+- Bumped `prettier` to v3.3.3 ([#138](https://github.com/robertwtucker/document-host/pull/138),
+  [#117](https://github.com/robertwtucker/document-host/pull/117))
+- Bumped `eslint-config-next` to v14.2.5 ([#137](https://github.com/robertwtucker/document-host/pull/137),
+  [#118](https://github.com/robertwtucker/document-host/pull/118))
+- Bumped `@ianvs/prettier-plugin-sort-imports` to v4.3.1 ([#136](https://github.com/robertwtucker/document-host/pull/136),
+  [#129](https://github.com/robertwtucker/document-host/pull/129))
+- Bumped `winston` to v3.13.1 ([#135](https://github.com/robertwtucker/document-host/pull/135))
+- Bumped `postcss` to v8.4.39 ([#134](https://github.com/robertwtucker/document-host/pull/134))
+- Bumped `next` to v14.2.5 ([#133](https://github.com/robertwtucker/document-host/pull/133),
+  [#119](https://github.com/robertwtucker/document-host/pull/119))
+- Bumped `tailwindcss` to v3.4.5 ([#132](https://github.com/robertwtucker/document-host/pull/132),
+  [#109](https://github.com/robertwtucker/document-host/pull/109))
+- Bumped `@typescript-eslint/eslint-plugin` to v7.16.0 ([#130](https://github.com/robertwtucker/document-host/pull/130),
+  [#113](https://github.com/robertwtucker/document-host/pull/113))
+- Bumped `typescript` to v5.5.3 ([#127](https://github.com/robertwtucker/document-host/pull/127),
+  [#121](https://github.com/robertwtucker/document-host/pull/121))
+- Bumped `mongodb` to v6.8.0 ([#126](https://github.com/robertwtucker/document-host/pull/126),
+  [#105](https://github.com/robertwtucker/document-host/pull/105))
+- Bumped `prettier-plugin-tailwindcss` to v0.6.5 ([#123](https://github.com/robertwtucker/document-host/pull/123),
+  [#114](https://github.com/robertwtucker/document-host/pull/114),
+  [#107](https://github.com/robertwtucker/document-host/pull/107))
+- Bumped `@typescript-eslint/parser` to v7.14.1 ([#120](https://github.com/robertwtucker/document-host/pull/120),
+  [#116](https://github.com/robertwtucker/document-host/pull/116),
+  [#111](https://github.com/robertwtucker/document-host/pull/111),
+  [#106](https://github.com/robertwtucker/document-host/pull/106))
+- Bumped `next-auth` to v5.0.0-beta.19 ([#104](https://github.com/robertwtucker/document-host/pull/104))
+- Bumped `@types/react` to v18.3.3 ([#103](https://github.com/robertwtucker/document-host/pull/103))
+
 ## [0.4.2] - 2024-05-22
 
 ### Added
@@ -17,15 +58,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumped `mongodb` to v6.6.2 [(#101](https://github.com/robertwtucker/document-host/pull/101),
+- Bumped `mongodb` to v6.6.2 ([#101](https://github.com/robertwtucker/document-host/pull/101),
   [#94](https://github.com/robertwtucker/document-host/pull/94),
-  [#88)](https://github.com/robertwtucker/document-host/pull/88)
-- Bumped `@types/node` to v20.12.12 [(#100](https://github.com/robertwtucker/document-host/pull/100),
+  [#88](https://github.com/robertwtucker/document-host/pull/88))
+- Bumped `@types/node` to v20.12.12 ([#100](https://github.com/robertwtucker/document-host/pull/100),
   [#92](https://github.com/robertwtucker/document-host/pull/92),
-  [#87)](https://github.com/robertwtucker/document-host/pull/87)
+  [#87](https://github.com/robertwtucker/document-host/pull/87))
 - Bumped `@typescript-eslint/parser` to v7.10.0 [(#99)](https://github.com/robertwtucker/document-host/pull/99)
-- Bumped `@typescript-eslint/eslint-plugin` to v7.10.0 [(#98](https://github.com/robertwtucker/document-host/pull/98),
-  [#93)](https://github.com/robertwtucker/document-host/pull/93)
+- Bumped `@typescript-eslint/eslint-plugin` to v7.10.0 ([#98](https://github.com/robertwtucker/document-host/pull/98),
+  [#93](https://github.com/robertwtucker/document-host/pull/93))
 - Bumped `jose` to v5.3.0 [(#97)](https://github.com/robertwtucker/document-host/pull/97)
 - Bumped `pnpm` to v9.1.2
 - Bumped `@types/react` to v18.3.2 [(#96)](https://github.com/robertwtucker/document-host/pull/96)
@@ -285,7 +326,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.2...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/robertwtucker/document-host/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/robertwtucker/document-host/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/robertwtucker/document-host/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/robertwtucker/document-host/compare/v0.3.21...v0.4.0
