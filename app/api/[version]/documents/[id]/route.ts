@@ -2,12 +2,9 @@
  * Copyright (c) 2023 Quadient Group AG
  * SPDX-License-Identifier: MIT
  */
-'use client'
 
-import { useParams } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
-
-import { find, HostedFile, isValidObjectId } from '@/lib/api/document'
+import { HostedFile, find, isValidObjectId } from '@/lib/api/document'
 import { logger } from '@/lib/logger'
 
 type Params = {
@@ -32,8 +29,8 @@ function streamData(file: HostedFile): ReadableStream<Uint8Array> {
   })
 }
 
-export async function GET(req: NextRequest) {
-  const { version, id } = useParams<Params>()
+export async function GET(req: NextRequest, context: { params: Params }) {
+  const { version, id } = context.params
   const requestInfo = `${req.method} ${req.nextUrl.pathname}`
 
   if (version && version.match(new RegExp('^v[1-2]'))) {
