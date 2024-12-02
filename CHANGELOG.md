@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2024-12-02
+
+### Changed
+
+- Decreased `dependabot` update frequency to monthly
+- Bumped `@types/node` to v22.10.1 ([#204](https://github.com/robertwtucker/document-host/pull/204),
+  [#197](https://github.com/robertwtucker/document-host/pull/197),
+  [#186](https://github.com/robertwtucker/document-host/pull/186),
+  [#178](https://github.com/robertwtucker/document-host/pull/178),
+  [#148](https://github.com/robertwtucker/document-host/pull/148))
+- Bumped `mongodb` to v6.11.0 ([#203](https://github.com/robertwtucker/document-host/pull/203),
+  [#185](https://github.com/robertwtucker/document-host/pull/185))
+- Bumped `typescript` to v5.7.2 ([#202](https://github.com/robertwtucker/document-host/pull/202),
+  [#189](https://github.com/robertwtucker/document-host/pull/189),
+  [#147](https://github.com/robertwtucker/document-host/pull/147))
+- Bumped `next` to v14.2.18 ([#201](https://github.com/robertwtucker/document-host/pull/201),
+  [#179](https://github.com/robertwtucker/document-host/pull/179),
+  [#156](https://github.com/robertwtucker/document-host/pull/156))
+- Bumped `winston` to v3.17.0 ([#200](https://github.com/robertwtucker/document-host/pull/200),
+  [#188](https://github.com/robertwtucker/document-host/pull/188),
+  [#155](https://github.com/robertwtucker/document-host/pull/155))
+- Bumped `@ianvs/prettier-plugin-sort-imports` to v4.4.0 ([#199](https://github.com/robertwtucker/document-host/pull/199))
+- Bumped `eslint-config-next` to v15.0.3 ([#198](https://github.com/robertwtucker/document-host/pull/198),
+  [#187](https://github.com/robertwtucker/document-host/pull/187))
+- Bumped `postcss` to v8.4.49 ([#196](https://github.com/robertwtucker/document-host/pull/196),
+  [#164](https://github.com/robertwtucker/document-host/pull/164),
+  [#143](https://github.com/robertwtucker/document-host/pull/143))
+- Bumped `tailwindcss` to v3.4.15 ([#195](https://github.com/robertwtucker/document-host/pull/195),
+  [#154](https://github.com/robertwtucker/document-host/pull/154),
+  [#144](https://github.com/robertwtucker/document-host/pull/144))
+- Bumped `@types/react-dom` to v18.3.1 ([#193](https://github.com/robertwtucker/document-host/pull/193))
+- Bumped `prettier-plugin-tailwindcss` to v0.6.8 ([#190](https://github.com/robertwtucker/document-host/pull/190),
+  [#152](https://github.com/robertwtucker/document-host/pull/152))
+- Bumped `@types/react` to v18.3.12 ([#184](https://github.com/robertwtucker/document-host/pull/184),
+  [#172](https://github.com/robertwtucker/document-host/pull/172))
+- Bumped `jose` to v5.9.6 ([#177](https://github.com/robertwtucker/document-host/pull/177))
+- Bumped `next-auth` to v5.0.0-beta.25 ([#176](https://github.com/robertwtucker/document-host/pull/176),
+  [#151](https://github.com/robertwtucker/document-host/pull/151))
+- Bumped `@typescript-eslint/eslint-plugin` to v7.18.0 ([#153](https://github.com/robertwtucker/document-host/pull/153))
+- Bumped `@typescript-eslint/parser` to v7.18.0 ([#146](https://github.com/robertwtucker/document-host/pull/146))
+
+## Fixed
+
+- Bumped `cross-spawn` to v7.0.5 to address a security advisory ([#194](https://github.com/robertwtucker/document-host/pull/194))
+- Bumped `micromatch` to v4.0.8 to address a security advisory ([#180](https://github.com/robertwtucker/document-host/pull/180))
+
 ## [0.4.3] - 2024-07-24
 
 ### Changed
@@ -326,7 +372,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.3...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/robertwtucker/document-host/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/robertwtucker/document-host/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/robertwtucker/document-host/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/robertwtucker/document-host/compare/v0.4.0...v0.4.1
