@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2024 Quadient Group AG
+ * SPDX-License-Identifier: MIT
+ */
+
 import Link from 'next/link'
 import {
   FileIcon,
