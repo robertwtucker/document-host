@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Link from 'next/link'
 import {
   FileIcon,
   FileIcon as FilePresentationIcon,
@@ -13,6 +12,7 @@ import {
 
 import { HostedDocument } from '@/lib/api/document'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from '@/components/custom-link'
 
 interface DocumentListProps {
   documents: HostedDocument[]

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   FileIcon,
@@ -14,6 +13,7 @@ import {
 
 import { documents } from '@/lib/mock-data'
 import { Button } from '@/components/ui/button'
+import Link from '@/components/custom-link'
 
 export default function DocumentPage({ params }: { params: { id: string } }) {
   const document = documents.find((doc) => doc.id === params.id)
