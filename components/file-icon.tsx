@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { ComponentPropsWithoutRef } from 'react'
 import {
   FileArchiveIcon,
   FileJsonIcon,
@@ -14,9 +15,8 @@ import {
   FileCodeIcon as FileXmlIcon,
 } from 'lucide-react'
 
-interface FileIconProps {
+interface FileIconProps extends ComponentPropsWithoutRef<'svg'> {
   contentType: string
-  [key: string]: any
 }
 
 export default function FileIcon({ contentType, ...props }: FileIconProps) {

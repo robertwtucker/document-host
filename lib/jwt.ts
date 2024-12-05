@@ -29,7 +29,7 @@ export function tokenFromRequest(req: NextRequest): string {
  */
 export async function verifyToken(req: NextRequest): Promise<JWT | null> {
   const jwks = createRemoteJWKSet(new URL(`${process.env.AUTH_AUTH0_ISSUER}/.well-known/jwks.json`))
-  let token = tokenFromRequest(req)
+  const token = tokenFromRequest(req)
 
   try {
     const { payload } = await jwtVerify(token, jwks, {
