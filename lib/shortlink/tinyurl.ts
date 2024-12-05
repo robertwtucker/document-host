@@ -5,6 +5,9 @@
 
 import { ShortlinkResponse } from './'
 
+/**
+ * The response from the TinyURL shortlink service
+ */
 type TinyUrlResponse = {
   data: {
     domain: string
@@ -20,6 +23,10 @@ type TinyUrlResponse = {
   errors: string[]
 }
 
+/**
+ * @param url The URL to shorten
+ * @returns The TinyURL-shortened version of the URL
+ */
 export async function createShortlink(url: string): Promise<ShortlinkResponse> {
   const serviceUrl = `${process.env.SHORTLINK_SERVICE_URL}/create`
   const emptyShortlinkResponse = { url: url }

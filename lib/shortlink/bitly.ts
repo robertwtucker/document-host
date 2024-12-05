@@ -5,6 +5,9 @@
 
 import { ShortlinkResponse } from './'
 
+/**
+ * The response from the Bitly shortlink service
+ */
 type BitlyResponse = {
   created_at: string
   id: string
@@ -19,6 +22,10 @@ type BitlyResponse = {
   }
 }
 
+/**
+ * @param url The URL to shorten
+ * @returns The Bitly-shortened version of the URL
+ */
 export async function createShortlink(url: string): Promise<ShortlinkResponse> {
   const serviceUrl = `${process.env.SHORTLINK_SERVICE_URL}/v4/shorten`
   const emptyShortlinkResponse = { url: url }

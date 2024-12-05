@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { HostedDocument } from '@/lib/api/document'
+import { HostedDocument } from '@/lib/api/documents'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import FileIcon from '@/components/file-icon'
 

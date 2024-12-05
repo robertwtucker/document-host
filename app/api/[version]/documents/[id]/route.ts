@@ -4,29 +4,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { HostedFile, find, isValidObjectId } from '@/lib/api/document'
+
+import { fetch, HostedFile, isValidObjectId } from '@/lib/api/documents'
 import { logger } from '@/lib/logger'
 
 type Params = {
   version: string
   id: string
-}
-
-function streamData(file: HostedFile): ReadableStream<Uint8Array> {
-  const downloadStream = file.content
-  return new ReadableStream({
-    start(controller) {
-      downloadStream.on('data', (chunk) => {
-        controller.enqueue(new Uint8Array(chunk))
-      })
-      downloadStream.on('end', () => {
-        controller.close()
-      })
-    },
-    cancel() {
-      downloadStream.destroy()
-    },
-  })
 }
 
 export async function GET(req: NextRequest, context: { params: Params }) {
@@ -44,7 +28,7 @@ export async function GET(req: NextRequest, context: { params: Params }) {
       })
     }
 
-    const hostedFile = await find(id)
+    const hostedFile = await fetch(id)
     if (typeof hostedFile == undefined || !hostedFile) {
       logger.info(requestInfo, { status: 404 })
       return new NextResponse(null, { status: 404 })
@@ -63,4 +47,21 @@ export async function GET(req: NextRequest, context: { params: Params }) {
     logger.info(requestInfo, { status: 400 })
     return new NextResponse(null, { status: 400 })
   }
+}
+
+function streamData(file: HostedFile): ReadableStream<Uint8Array> {
+  const downloadStream = file.content
+  return new ReadableStream({
+    start(controller) {
+      downloadStream.on('data', (chunk) => {
+        controller.enqueue(new Uint8Array(chunk))
+      })
+      downloadStream.on('end', () => {
+        controller.close()
+      })
+    },
+    cancel() {
+      downloadStream.destroy()
+    },
+  })
 }
