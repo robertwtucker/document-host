@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button'
 import Link from '@/components/custom-link'
 import FileIcon from '@/components/file-icon'
 
-export default async function DocumentPage({ params }: { params: { id: string } }) {
+export default async function DocumentPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   let canListDocuments = false
   let canDeleteDocuments = false
 
