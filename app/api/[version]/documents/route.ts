@@ -4,42 +4,35 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { User } from 'next-auth'
 import { auth } from '@/auth'
+
 import { insert } from '@/lib/api/document'
-import { verifyToken } from '@/lib/jwt'
+import { hasPermission, tokenFromRequest, verifyToken } from '@/lib/jwt'
 import { logger } from '@/lib/logger'
-import { shorten } from '@/lib/shortlink'
 
 export async function POST(request: NextRequest, context: { params: { version: string } }) {
-  return auth(async (req: any & { auth?: { user?: User } }) => {
+  return auth(async (req: any & { auth?: { accessToken?: string } }) => {
     const { version } = context.params
     const requestInfo = `${request.method} ${request.nextUrl.pathname}`
 
     let authorized = false
-    if (req?.auth?.user) {
+    if (req?.auth?.accessToken) {
       logger.debug('User authenticated', req.auth)
-      // TODO: check scope once sign-in is working
-      // authorized = true
+      authorized = hasPermission(req.auth.accessToken, 'create:documents')
     } else {
       logger.debug('User not authenticated, checking for token')
       const verifiedToken = await verifyToken(req)
-      if (verifiedToken && verifiedToken.scope?.includes('create:documents')) {
-        authorized = true
+      if (verifiedToken) {
+        authorized = hasPermission(tokenFromRequest(req), 'create:documents')
       }
     }
 
     if (authorized) {
+      logger.debug('User has permission to create documents')
       if (version && version.match(new RegExp('^v[1-2]'))) {
         const payload = await req.json()
         const document = await insert(payload)
         if (document) {
-          document.url = `${process.env.APP_URL}/${document.id}`
-          const shortened = await shorten(document.url)
-          if (shortened && shortened.shortlink) {
-            document.shortLink = shortened.shortlink
-          }
-
           let versionedResponse = {}
           if (version === 'v1') {
             versionedResponse = document

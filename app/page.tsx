@@ -5,28 +5,40 @@
 
 import { auth } from '@/auth'
 
-import { documents } from '@/lib/mock-data'
+import { findAll, HostedDocument } from '@/lib/api/document'
+import { hasPermission } from '@/lib/jwt'
 import DocumentList from '@/components/document-list'
 import SearchBar from '@/components/search-bar'
 
 export default async function Home() {
-  const session = await auth()
+  let canListDocuments = false
+  let documents: HostedDocument[] = []
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Documents</h1>
-      {session ? (
+  const session = await auth()
+  if (session?.accessToken) {
+    canListDocuments = hasPermission(session.accessToken, 'list:documents')
+  }
+
+  if (canListDocuments) {
+    documents = await findAll()
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8">Documents</h1>
         <div>
           <SearchBar />
           <DocumentList documents={documents} />
         </div>
-      ) : (
+      </div>
+    )
+  } else {
+    return (
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center text-muted-foreground">
           <p>
             Please <em>Sign In</em> to view documents.
           </p>
         </div>
-      )}
-    </div>
-  )
+      </div>
+    )
+  }
 }
