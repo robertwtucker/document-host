@@ -15,6 +15,7 @@ export interface HostedDocument {
   fileBase64: string
   url: string
   shortLink?: string
+  uploadedAt?: Date
 }
 
 /**
