@@ -5,7 +5,7 @@
 
 import { auth } from '@/auth'
 
-import { findAll, HostedDocument } from '@/lib/api/document'
+import { findAll, HostedDocument } from '@/lib/api/documents'
 import { hasPermission } from '@/lib/jwt'
 import DocumentList from '@/components/document-list'
 import SearchBar from '@/components/search-bar'

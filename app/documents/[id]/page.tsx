@@ -6,7 +6,7 @@
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
 
-import { findOne } from '@/lib/api/document'
+import { findOne } from '@/lib/api/documents'
 import { hasPermission } from '@/lib/jwt'
 import { Button } from '@/components/ui/button'
 import Link from '@/components/custom-link'

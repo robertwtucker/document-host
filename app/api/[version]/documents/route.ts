@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 
-import { insert } from '@/lib/api/document'
+import { insert } from '@/lib/api/documents'
 import { hasPermission, tokenFromRequest, verifyToken } from '@/lib/jwt'
 import { logger } from '@/lib/logger'
 

@@ -14,6 +14,9 @@ import { HostedDocument, HostedFile } from './types'
 
 export * from './types'
 
+/**
+ * @returns All documents stored in the database
+ */
 export async function findAll(): Promise<HostedDocument[]> {
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
@@ -32,6 +35,33 @@ export async function findAll(): Promise<HostedDocument[]> {
   })
 }
 
+/**
+ * @param id The ID of the document to find
+ * @returns The document with the specified ID, or null if not found
+ */
+export async function findOne(id: string): Promise<HostedDocument | null> {
+  const client = await clientPromise
+  const bucket = new GridFSBucket(client.db())
+  const objectId = ObjectId.createFromHexString(id)
+  const files = await bucket.find({ _id: objectId }).toArray()
+  if (files.length !== 1) {
+    return null
+  }
+
+  return {
+    id: id,
+    filename: files[0].filename,
+    contentType: files[0].metadata?.contentType ?? 'application/octet-stream',
+    fileBase64: '[stored]',
+    url: `${process.env.APP_URL}/${id}`,
+    uploadedAt: files[0].uploadDate,
+  } as HostedDocument
+}
+
+/**
+ * @param document The document to insert
+ * @returns The inserted document with its ID and URL(s)
+ */
 export async function insert(document: HostedDocument): Promise<HostedDocument | null> {
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
@@ -52,26 +82,11 @@ export async function insert(document: HostedDocument): Promise<HostedDocument |
   return document
 }
 
-export async function findOne(id: string): Promise<HostedDocument | null> {
-  const client = await clientPromise
-  const bucket = new GridFSBucket(client.db())
-  const objectId = ObjectId.createFromHexString(id)
-  const files = await bucket.find({ _id: objectId }).toArray()
-  if (files.length !== 1) {
-    return null
-  }
-
-  return {
-    id: id,
-    filename: files[0].filename,
-    contentType: files[0].metadata?.contentType ?? 'application/octet-stream',
-    fileBase64: '[stored]',
-    url: `${process.env.APP_URL}/${id}`,
-    uploadedAt: files[0].uploadDate,
-  } as HostedDocument
-}
-
-export async function find(id: string): Promise<HostedFile | null> {
+/**
+ * @param id The ID of the file to fetch
+ * @returns The file with the specified ID, or null if not found
+ */
+export async function fetch(id: string): Promise<HostedFile | null> {
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
   const objectId = ObjectId.createFromHexString(id)
@@ -94,6 +109,10 @@ export async function find(id: string): Promise<HostedFile | null> {
   return null
 }
 
+/**
+ * @param id The ID value to test
+ * @returns A stringified MongoDB ObjectId, if valid, otherwise it throws an error
+ */
 export function isValidObjectId(id: string): string {
   return ObjectId.createFromHexString(id).toHexString()
 }

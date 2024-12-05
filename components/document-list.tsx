@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { HostedDocument } from '@/lib/api/document'
+import { HostedDocument } from '@/lib/api/documents'
 import Link from '@/components/custom-link'
 import DocumentCard from '@/components/document-card'
 
