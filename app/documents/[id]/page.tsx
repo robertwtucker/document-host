@@ -12,14 +12,15 @@ import { Button } from '@/components/ui/button'
 import Link from '@/components/custom-link'
 import FileIcon from '@/components/file-icon'
 
-export default async function DocumentPage({ params }: { params: { id: string } }) {
+export default async function DocumentPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   let canListDocuments = false
-  let canDeleteDocuments = false
+  // let canDeleteDocuments = false
 
   const session = await auth()
   if (session?.accessToken) {
     canListDocuments = hasPermission(session.accessToken, 'list:documents')
-    canDeleteDocuments = hasPermission(session.accessToken, 'delete:documents')
+    // canDeleteDocuments = hasPermission(session.accessToken, 'delete:documents')
   }
 
   if (canListDocuments) {
@@ -35,13 +36,13 @@ export default async function DocumentPage({ params }: { params: { id: string } 
             Back to Documents
           </Button>
         </Link>
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <div className="flex items-center gap-4 mb-4">
-            <FileIcon contentType={document.contentType} className="w-8 h-8" />
+        <div className="rounded-lg bg-white p-6 shadow-md">
+          <div className="mb-4 flex items-center gap-4">
+            <FileIcon contentType={document.contentType} className="size-8" />
             <h1 className="text-3xl font-bold">{document.filename}</h1>
           </div>
           <Link href={document.url} target="_blank">
-            <p className="text-gray-600 mb-4">{document.url}</p>
+            <p className="mb-4 text-gray-600">{document.url}</p>
           </Link>
           <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
             <p>Content Type: {document.contentType}</p>
@@ -56,7 +57,7 @@ export default async function DocumentPage({ params }: { params: { id: string } 
   } else {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-muted-foreground">
+        <div className="text-muted-foreground text-center">
           <p>
             Please <em>Sign In</em> to view documents.
           </p>

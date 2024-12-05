@@ -13,8 +13,8 @@ type Params = {
   id: string
 }
 
-export async function GET(req: NextRequest, context: { params: Params }) {
-  const { version, id } = context.params
+export async function GET(req: NextRequest, context: { params: Promise<Params> }) {
+  const { version, id } = await context.params
   const requestInfo = `${req.method} ${req.nextUrl.pathname}`
 
   if (version && version.match(new RegExp('^v[1-2]'))) {

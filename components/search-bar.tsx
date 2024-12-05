@@ -21,16 +21,16 @@ export default function SearchBar() {
   }
 
   return (
-    <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+    <form onSubmit={handleSearch} className="mb-6 flex gap-2">
       <Input
         type="text"
         placeholder="Search documents..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="flex-grow"
+        className="grow"
       />
       <Button type="submit">
-        <Search className="w-4 h-4 mr-2" />
+        <Search className="mr-2 size-4" />
         Search
       </Button>
     </form>

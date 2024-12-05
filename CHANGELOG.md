@@ -13,7 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Refactored and documented services in lib ([#207](https://github.com/robertwtucker/document-host/pull/207))
+- Migrated to Next 15 and React 19-rc ([#208](https://github.com/robertwtucker/document-host/pull/208))
+- Refactored and documented services in lib package ([#207](https://github.com/robertwtucker/document-host/pull/207))
+
+### Fixed
+
+- Resolved issues flagged after eslint update ([#208](https://github.com/robertwtucker/document-host/pull/208))
 
 ## [0.4.4] - 2024-12-02
 

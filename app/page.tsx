@@ -23,7 +23,7 @@ export default async function Home() {
     documents = await findAll()
     return (
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Documents</h1>
+        <h1 className="mb-8 text-3xl font-bold">Documents</h1>
         <div>
           <SearchBar />
           <DocumentList documents={documents} />
@@ -33,7 +33,7 @@ export default async function Home() {
   } else {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-muted-foreground">
+        <div className="text-muted-foreground text-center">
           <p>
             Please <em>Sign In</em> to view documents.
           </p>

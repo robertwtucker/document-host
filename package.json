@@ -4,7 +4,7 @@
   "description": "Provides temporary storage for demo-generated documents",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -25,10 +25,10 @@
     "jose": "^5.9.6",
     "lucide-react": "^0.462.0",
     "mongodb": "^6.11.0",
-    "next": "14.2.18",
+    "next": "15.0.3",
     "next-auth": "5.0.0-beta.25",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "winston": "^3.17.0"
@@ -44,6 +44,7 @@
     "eslint-config-next": "15.0.3",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "^8.4.49",
     "prettier": "^3.4.1",
     "prettier-plugin-tailwindcss": "^0.6.9",
