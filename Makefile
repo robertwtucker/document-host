@@ -6,4 +6,22 @@ build:
 	npm run build
 
 docker:
-	docker build -t ${IMAGE}:latest -t ${IMAGE}:${VERSION} .
+	docker buildx build \
+		--tag ${IMAGE}:latest \
+		--tag ${IMAGE}:${VERSION} \
+		--platform linux/arm64,linux/amd64 \
+		--push .
+
+docker-amd:
+	docker buildx build \
+		--tag ${IMAGE}:latest \
+		--tag ${IMAGE}:${VERSION} \
+		--platform linux/amd64 \
+		--load .
+
+docker-arm:
+	docker buildx build \
+		--tag ${IMAGE}:latest \
+		--tag ${IMAGE}:${VERSION} \
+		--platform linux/arm64 \
+		--load .
