@@ -15,10 +15,10 @@ RUN pnpm run build
 FROM gcr.io/distroless/nodejs22-debian12 AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV HOSTNAME 0.0.0.0
-ENV PORT 3000
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV HOSTNAME='0.0.0.0'
+ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
