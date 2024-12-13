@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2024-12-13
+
+### Added
+
+- Support for multi-arch builds with Docker ([#210](https://github.com/robertwtucker/document-host/pull/210))
+
+### Changed
+
+- Updated Next to v15.1 and React 19 ([#211](https://github.com/robertwtucker/document-host/pull/211))
+
 ## [0.5.0] - 2024-12-04
 
 ### Added
@@ -387,7 +397,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/robertwtucker/document-host/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/robertwtucker/document-host/compare/v0.4.4...v0.5.0
 [0.4.4]: https://github.com/robertwtucker/document-host/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/robertwtucker/document-host/compare/v0.4.2...v0.4.3
