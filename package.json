@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/robertwtucker/document-host/README.md",
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jose": "^5.9.6",
