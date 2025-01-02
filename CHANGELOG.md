@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2025-01-01
+
+### Changed
+
+- Bumped `lucide-react` to v0.469.0 ([#212](https://github.com/robertwtucker/document-host/pull/212))
+- Bumped `@types/node` to v22.10.3 ([#213](https://github.com/robertwtucker/document-host/pull/213))
+- Bumped `eslint-config-next` to v15.1.3 ([#214](https://github.com/robertwtucker/document-host/pull/214))
+- Bumped `@radix-ui/react-slot` to v1.1.1 ([#215](https://github.com/robertwtucker/document-host/pull/215))
+- Bumped `mongodb` to v6.12.0 ([#216](https://github.com/robertwtucker/document-host/pull/216))
+
 ## [0.5.1] - 2024-12-13
 
 ### Added
@@ -397,7 +407,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.1...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/robertwtucker/document-host/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/robertwtucker/document-host/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/robertwtucker/document-host/compare/v0.4.4...v0.5.0
 [0.4.4]: https://github.com/robertwtucker/document-host/compare/v0.4.3...v0.4.4
