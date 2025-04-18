@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2025-04-18
+
+### Changed
+
+- Bumped `eslint-config-next` to v15.2.4 ([#230](https://github.com/robertwtucker/document-host/pull/230))
+- Bumped `eslint-config-prettier` to v10.1.1 ([#228](https://github.com/robertwtucker/document-host/pull/228))
+- Bumped `jose` to v6.0.10 ([#227](https://github.com/robertwtucker/document-host/pull/227))
+- Bumped `postcss` to v8.5.3 ([#224](https://github.com/robertwtucker/document-host/pull/224))
+- Bumped `tailwind-merge` to v3.0.2 ([#223](https://github.com/robertwtucker/document-host/pull/223))
+- Bumped `eslint-plugin-prettier` to v5.2.5 ([#226](https://github.com/robertwtucker/document-host/pull/226),
+  [#220](https://github.com/robertwtucker/document-host/pull/220))
+- Bumped `eslint-plugin-tailwindcss` to v3.0.18 ([#219](https://github.com/robertwtucker/document-host/pull/219))
+
 ## [0.5.2] - 2025-01-01
 
 ### Changed
@@ -407,7 +420,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.2...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/robertwtucker/document-host/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/robertwtucker/document-host/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/robertwtucker/document-host/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/robertwtucker/document-host/compare/v0.4.4...v0.5.0
