@@ -1,6 +1,6 @@
 {
   "name": "document-host",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Provides temporary storage for demo-generated documents",
   "private": true,
   "scripts": {
@@ -19,37 +19,37 @@
   },
   "homepage": "https://github.com/robertwtucker/document-host/README.md",
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-slot": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jose": "^6.0.10",
     "lucide-react": "^0.494.0",
-    "mongodb": "^6.12.0",
-    "next": "15.1.0",
+    "mongodb": "^6.15.0",
+    "next": "15.3.1",
     "next-auth": "5.0.0-beta.25",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "tailwind-merge": "^3.0.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
-    "@types/node": "^22.10.3",
-    "@types/react": "19.0.1",
-    "@types/react-dom": "19.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.19.0",
-    "@typescript-eslint/parser": "^8.19.0",
-    "eslint": "^9.17.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@types/node": "^22.14.1",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
+    "@typescript-eslint/eslint-plugin": "^8.30.1",
+    "@typescript-eslint/parser": "^8.30.1",
+    "eslint": "^9.24.0",
     "eslint-config-next": "15.3.1",
     "eslint-config-prettier": "^10.1.2",
-    "eslint-plugin-prettier": "^5.2.5",
+    "eslint-plugin-prettier": "^5.2.6",
     "eslint-plugin-tailwindcss": "^3.18.0",
     "postcss": "^8.5.3",
-    "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.6.9",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321"
+  "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677"
 }
