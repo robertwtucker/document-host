@@ -3,7 +3,7 @@ VERSION=$(shell git describe --tags --always | sed 's/v//;s/-.*//')
 IMAGE="registry.sptcloud.com/spt/docuhost"
 
 build:
-	npm run build
+	pnpm run build
 
 docker:
 	docker buildx build \
