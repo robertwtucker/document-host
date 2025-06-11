@@ -7,13 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.5] - 2025-06-11
+
+### Changed
+
+- Bumped CI to use node v24 ([#245](https://github.com/robertwtucker/document-host/pull/245))
+- Bumped `@typescript-eslint/parser` to v8.33.0 ([#244](https://github.com/robertwtucker/document-host/pull/244))
+- Bumped `eslint-plugin-prettier` to v5.4.1 ([#243](https://github.com/robertwtucker/document-host/pull/243))
+- Bumped `postcss` to v8.5.4 ([#242](https://github.com/robertwtucker/document-host/pull/242))
+- Bumped `@types/node` to v22.15.29 ([#241](https://github.com/robertwtucker/document-host/pull/241))
+- Bumped `next-auth` to v5.0.0-beta.28 ([#240](https://github.com/robertwtucker/document-host/pull/240))
+- Bumped Dockerfile base image to node v24 ([#239](https://github.com/robertwtucker/document-host/pull/239))
+
 ## [0.5.4] - 2025-05-22
 
 ### Changed
 
 - Bumped `mongodb` to v6.16.0 ([#236](https://github.com/robertwtucker/document-host/pull/236))
-- Bumped `@typescript-eslint/parser` to v8.31.1 ([#235](https://github.com/robertwtucker/document-host/pull/235))
-- Bumped `@types/node` to v22.15.3 ([#234](https://github.com/robertwtucker/document-host/pull/234))
+- Bumped `@@types/node` to v22.15.3 ([#234](https://github.com/robertwtucker/document-host/pull/234))
 - Bumped `next-auth` to v5.0.0-beta.27 ([#233](https://github.com/robertwtucker/document-host/pull/233))
 - Bumped `eslint` to v9.25.1 ([#232](https://github.com/robertwtucker/document-host/pull/232))
 
@@ -430,7 +441,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.4...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/robertwtucker/document-host/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/robertwtucker/document-host/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/robertwtucker/document-host/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/robertwtucker/document-host/compare/v0.5.1...v0.5.2
