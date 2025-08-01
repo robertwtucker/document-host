@@ -79,8 +79,8 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1(eslint-config-prettier@10.1.5(eslint@9.30.0(jiti@1.21.7)))(eslint@9.30.0(jiti@1.21.7))(prettier@3.5.3)
       eslint-plugin-tailwindcss:
-        specifier: ^3.18.0
-        version: 3.18.0(tailwindcss@3.4.17)
+        specifier: ^3.18.2
+        version: 3.18.2(tailwindcss@3.4.17)
       postcss:
         specifier: ^8.5.4
         version: 8.5.4
@@ -1112,8 +1112,8 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9.7
 
-  eslint-plugin-tailwindcss@3.18.0:
-    resolution: {integrity: sha512-PQDU4ZMzFH0eb2DrfHPpbgo87Zgg2EXSMOj1NSfzdZm+aJzpuwGerfowMIaVehSREEa0idbf/eoNYAOHSJoDAQ==}
+  eslint-plugin-tailwindcss@3.18.2:
+    resolution: {integrity: sha512-QbkMLDC/OkkjFQ1iz/5jkMdHfiMu/uwujUHLAJK5iwNHD8RTxVTlsUezE0toTZ6VhybNBsk+gYGPDq2agfeRNA==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       tailwindcss: ^3.4.0
@@ -3396,7 +3396,7 @@ snapshots:
       string.prototype.matchall: 4.0.12
       string.prototype.repeat: 1.0.0
 
-  eslint-plugin-tailwindcss@3.18.0(tailwindcss@3.4.17):
+  eslint-plugin-tailwindcss@3.18.2(tailwindcss@3.4.17):
     dependencies:
       fast-glob: 3.3.3
       postcss: 8.5.4
