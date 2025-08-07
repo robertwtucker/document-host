@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 2025-08-07
+
+### Changed
+
+- Bumped `next-auth` to v5.0.0-beta.29 ([#259](https://github.com/robertwtucker/document-host/pull/259))
+- Bumped `eslint-config-next` to v15.4.5 ([#258](https://github.com/robertwtucker/document-host/pull/258))
+- Bumped `eslint-plugin-tailwindcss` to v3.18.2 ([#257](https://github.com/robertwtucker/document-host/pull/257))
+- Bumped `@typescript-eslint/plugin` to v8.38.0 ([#256](https://github.com/robertwtucker/document-host/pull/256))
+- Bumped `@eslint/plugin-kit` to v0.3.4 ([#254](https://github.com/robertwtucker/document-host/pull/254))
+- Bumped `@types/node` to v24.0.10 ([#253](https://github.com/robertwtucker/document-host/pull/253))
+- Bumped `@typescript-eslint/parser` to v8.38.0 ([#255](https://github.com/robertwtucker/document-host/pull/255),
+  [#251](https://github.com/robertwtucker/document-host/pull/251))
+- Bumped `lucide-react` to v0.525.0 ([#250](https://github.com/robertwtucker/document-host/pull/250))
+- Bumped `@types/react-dom` to v19.1.7 ([#249](https://github.com/robertwtucker/document-host/pull/249))
+- Bumped `eslint` to v9.32.0 ([#248](https://github.com/robertwtucker/document-host/pull/248))
+- Bumped `brace-expansion` to v1.1.12 ([#247](https://github.com/robertwtucker/document-host/pull/247))
+
 ## [0.5.5] - 2025-06-11
 
 ### Changed
@@ -441,7 +458,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.5...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.6...HEAD
+[0.5.6]: https://github.com/robertwtucker/document-host/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/robertwtucker/document-host/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/robertwtucker/document-host/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/robertwtucker/document-host/compare/v0.5.2...v0.5.3
