@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.7] - 2025-09-18
+
+### Changed
+
+- Bumped `eslint` to v9.34.0 ([#265](https://github.com/robertwtucker/document-host/pull/265))
+- Bumped `@typescript-eslint/parser` to v8.41.0 ([#264](https://github.com/robertwtucker/document-host/pull/264))
+- Bumped `@types/node` to v24.3.0 ([#263](https://github.com/robertwtucker/document-host/pull/263))
+- Bumped `lucide-react` to v5.542.0 ([#262](https://github.com/robertwtucker/document-host/pull/262))
+- Bumped `mongodb` to v6.19.0 ([#261](https://github.com/robertwtucker/document-host/pull/261))
+
 ## [0.5.6] - 2025-08-07
 
 ### Changed
@@ -458,7 +468,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.6...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/robertwtucker/document-host/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/robertwtucker/document-host/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/robertwtucker/document-host/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/robertwtucker/document-host/compare/v0.5.3...v0.5.4
