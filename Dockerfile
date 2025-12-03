@@ -1,7 +1,7 @@
 FROM node:24 AS base
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
-RUN corepack enable
+RUN npm install -g pnpm
 COPY . /app
 WORKDIR /app
 
@@ -12,7 +12,7 @@ FROM base AS builder
 RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
-FROM gcr.io/distroless/nodejs22-debian12 AS runner
+FROM gcr.io/distroless/nodejs24-debian12 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
