@@ -3,16 +3,18 @@
 ## Commands
 
 ```bash
-pnpm run dev      # Start dev server (Turbopack)
-pnpm run build    # Production build
-pnpm run lint     # ESLint
+pnpm run dev        # Start dev server (Turbopack)
+pnpm run build      # Production build
+pnpm run lint       # ESLint
+pnpm run test       # Vitest (run once)
+pnpm run test:watch # Vitest (watch mode)
 ```
 
-No test suite exists — CI only runs the build.
+Run a single test file: `pnpm run test __tests__/lib/jwt.test.ts`
 
 ## Architecture
 
-Docuhost is a Next.js 15 App Router application that provides:
+Docuhost is a Next.js 16 App Router application that provides:
 - A **REST API** (`/api/[version]/documents`) for uploading documents (base64-encoded) and retrieving them by ID
 - A **browser UI** for browsing/viewing documents (requires Auth0 login with `list:documents` permission)
 
@@ -32,7 +34,7 @@ Two parallel authorization paths exist for `POST /api/[version]/documents`:
 
 Permission strings used: `create:documents`, `list:documents`.
 
-Auth.js middleware (`middleware.ts`) protects all routes **except** `/api/*`, `/_next/*`, and `favicon.ico`.
+Auth.js proxy (`proxy.ts`) protects all routes **except** `/api/*`, `/_next/*`, and `favicon.ico`.
 
 ### Environment variables
 
@@ -45,6 +47,8 @@ Copy `example.env` to `.env.local`. Key variables:
 
 ## Conventions
 
+- **Tailwind config**: No `tailwind.config.ts` — Tailwind v4 theme (shadcn/ui colors, border radius) lives in the `@theme` block in `app/globals.css`
+- **Tests**: Vitest test files live in `__tests__/` mirroring the source tree. Mock modules with `vi.mock()`; use regular `function` (not arrow) when mocking constructors (e.g. `GridFSBucket`)
 - **Copyright header**: Every source file begins with a JSDoc comment block: `Copyright (c) [year] Quadient Group AG` + `SPDX-License-Identifier: MIT`
 - **Path aliases**: Use `@/` for all internal imports (`@/lib/...`, `@/components/...`)
 - **Import order**: Enforced by `@ianvs/prettier-plugin-sort-imports` — react → next → third-party → `@/lib` → `@/components/ui` → `@/components` → relative
