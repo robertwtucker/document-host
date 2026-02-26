@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.9] - 2025-02-25
+
+### Added
+
+- Added unit and integration tests ([#285](https://github.com/robertwtucker/document-host/pull/285))
+
+### Changed
+
+- Migrated Next.js to v16 and Tailwind CSS to v4 ([#284](https://github.com/robertwtucker/document-host/pull/284))
+- Updated CI workflow actions to latest versions ([#283](https://github.com/robertwtucker/document-host/pull/283))
+- Applied security updates to `next`, `ajv`, and `minimatch` ([#282](https://github.com/robertwtucker/document-host/pull/282))
+- Bumped `tailwindcss` to v3.4.19 ([#281](https://github.com/robertwtucker/document-host/pull/281))
+- Bumped `eslint-config-next` to v16.1.1 ([#280](https://github.com/robertwtucker/document-host/pull/280))
+- Bumped `@types/node` to v25.0.3 ([#279](https://github.com/robertwtucker/document-host/pull/279))
+- Bumped `lucide-react` to v0.562.0 ([#278](https://github.com/robertwtucker/document-host/pull/278))
+- Applied security updates to `next`, `glob`, and `js-yaml` ([#277](https://github.com/robertwtucker/document-host/pull/277))
+
+## [0.5.8] - 2025-12-03
+
+### Changed
+
+- Adjusted Dockerfile for packaging changes in Node v24 ([#274](https://github.com/robertwtucker/document-host/pull/274))
+- Bumped `next-auth` to v5.0.0-beta.30 ([#272](https://github.com/robertwtucker/document-host/pull/272))
+- Bumped `@types/node` to v24.6.1 ([#271](https://github.com/robertwtucker/document-host/pull/271))
+- Bumped `typescript` to v5.9.3 ([#270](https://github.com/robertwtucker/document-host/pull/270))
+- Bumped `@types/react-dom` to v19.1.11 ([#269](https://github.com/robertwtucker/document-host/pull/269))
+- Bumped `@typescript-eslint/parser` to v8.45.0 ([#268](https://github.com/robertwtucker/document-host/pull/268))
+- Bumped `eslint` to v9.36.0 ([#267](https://github.com/robertwtucker/document-host/pull/267))
+
 ## [0.5.7] - 2025-09-18
 
 ### Changed
@@ -468,7 +497,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.7...HEAD
+[unreleased]: https://github.com/robertwtucker/document-host/compare/v0.5.9...HEAD
+[0.5.9]: https://github.com/robertwtucker/document-host/compare/v0.5.8...v0.5.9
+[0.5.8]: https://github.com/robertwtucker/document-host/compare/v0.5.7...v0.5.8
 [0.5.7]: https://github.com/robertwtucker/document-host/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/robertwtucker/document-host/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/robertwtucker/document-host/compare/v0.5.4...v0.5.5
