@@ -13,17 +13,8 @@ vi.mock('@/lib/logger', () => ({
 const mockInsert = vi.fn()
 vi.mock('@/lib/api/documents', () => ({ insert: mockInsert }))
 
-const mockAuth = vi.fn()
-vi.mock('@/auth', () => ({ auth: mockAuth }))
-
-const mockVerifyToken = vi.fn()
-const mockHasPermission = vi.fn()
-const mockTokenFromRequest = vi.fn()
-vi.mock('@/lib/jwt', () => ({
-  verifyToken: mockVerifyToken,
-  hasPermission: mockHasPermission,
-  tokenFromRequest: mockTokenFromRequest,
-}))
+const mockAuthorize = vi.fn()
+vi.mock('@/lib/authorize', () => ({ authorize: mockAuthorize }))
 
 function makePostRequest(body: object, authHeader?: string): NextRequest {
   const headers = new Headers({ 'content-type': 'application/json' })
@@ -46,62 +37,41 @@ const sampleDoc = {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockAuth.mockResolvedValue(null)
-  mockVerifyToken.mockResolvedValue(null)
-  mockHasPermission.mockReturnValue(false)
-  mockTokenFromRequest.mockReturnValue('')
+  mockAuthorize.mockResolvedValue(null)
   mockInsert.mockResolvedValue(sampleDoc)
 })
 
 describe('POST /api/[version]/documents', () => {
   describe('authorization', () => {
-    it('returns 401 when no session and no valid Bearer token', async () => {
+    it('returns 401 when authorize returns null', async () => {
       const { POST } = await import('@/app/api/[version]/documents/route')
       const req = makePostRequest({ filename: 'test.pdf' })
       const res = await POST(req, { params: Promise.resolve({ version: 'v2' }) })
       expect(res.status).toBe(401)
     })
 
-    it('returns 401 when session exists but lacks create:documents permission', async () => {
+    it('returns 201 when authorize returns a principal', async () => {
       const { POST } = await import('@/app/api/[version]/documents/route')
-      mockAuth.mockResolvedValue({ accessToken: 'some.token' })
-      mockHasPermission.mockReturnValue(false)
-
-      const req = makePostRequest({ filename: 'test.pdf' })
-      const res = await POST(req, { params: Promise.resolve({ version: 'v2' }) })
-      expect(res.status).toBe(401)
-    })
-
-    it('authorizes via session token with create:documents permission', async () => {
-      const { POST } = await import('@/app/api/[version]/documents/route')
-      mockAuth.mockResolvedValue({ accessToken: 'valid.session.token' })
-      mockHasPermission.mockReturnValue(true)
+      mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['create:documents'] })
 
       const req = makePostRequest({ filename: 'test.pdf', contentType: 'application/pdf', fileBase64: 'abc' })
       const res = await POST(req, { params: Promise.resolve({ version: 'v2' }) })
       expect(res.status).toBe(201)
     })
 
-    it('authorizes via Bearer token when no session', async () => {
+    it('passes the required permission to authorize', async () => {
       const { POST } = await import('@/app/api/[version]/documents/route')
-      mockAuth.mockResolvedValue(null)
-      mockVerifyToken.mockResolvedValue({ sub: 'machine', permissions: ['create:documents'] })
-      mockTokenFromRequest.mockReturnValue('valid.bearer.token')
-      mockHasPermission.mockReturnValue(true)
+      mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['create:documents'] })
 
-      const req = makePostRequest(
-        { filename: 'test.pdf', contentType: 'application/pdf', fileBase64: 'abc' },
-        'Bearer valid.bearer.token'
-      )
-      const res = await POST(req, { params: Promise.resolve({ version: 'v2' }) })
-      expect(res.status).toBe(201)
+      const req = makePostRequest({ filename: 'test.pdf', contentType: 'application/pdf', fileBase64: 'abc' })
+      await POST(req, { params: Promise.resolve({ version: 'v2' }) })
+      expect(mockAuthorize).toHaveBeenCalledWith(req, 'create:documents')
     })
   })
 
   describe('version handling', () => {
     beforeEach(() => {
-      mockAuth.mockResolvedValue({ accessToken: 'valid.session.token' })
-      mockHasPermission.mockReturnValue(true)
+      mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['create:documents'] })
     })
 
     it('v2 wraps the document in a { document } envelope', async () => {
@@ -140,8 +110,7 @@ describe('POST /api/[version]/documents', () => {
   describe('insert failure', () => {
     it('returns 500 when insert returns null', async () => {
       const { POST } = await import('@/app/api/[version]/documents/route')
-      mockAuth.mockResolvedValue({ accessToken: 'valid.session.token' })
-      mockHasPermission.mockReturnValue(true)
+      mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['create:documents'] })
       mockInsert.mockResolvedValue(null)
 
       const req = makePostRequest({ filename: 'test.pdf', contentType: 'application/pdf', fileBase64: 'abc' })

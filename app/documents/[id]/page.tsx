@@ -4,24 +4,17 @@
  */
 
 import { notFound } from 'next/navigation'
-import { auth } from '@/auth'
 
 import { findOne } from '@/lib/api/documents'
-import { hasPermission } from '@/lib/jwt'
+import { sessionHasPermission } from '@/lib/authorize'
 import { Button } from '@/components/ui/button'
 import Link from '@/components/custom-link'
 import FileIcon from '@/components/file-icon'
 
 export default async function DocumentPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params
-  let canListDocuments = false
-  // let canDeleteDocuments = false
 
-  const session = await auth()
-  if (session?.accessToken) {
-    canListDocuments = hasPermission(session.accessToken, 'list:documents')
-    // canDeleteDocuments = hasPermission(session.accessToken, 'delete:documents')
-  }
+  const canListDocuments = await sessionHasPermission('list:documents')
 
   if (canListDocuments) {
     const document = await findOne(params.id)

@@ -3,21 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { auth } from '@/auth'
-
 import { findAll, HostedDocument } from '@/lib/api/documents'
-import { hasPermission } from '@/lib/jwt'
+import { sessionHasPermission } from '@/lib/authorize'
 import DocumentList from '@/components/document-list'
 import SearchBar from '@/components/search-bar'
 
 export default async function Home() {
-  let canListDocuments = false
   let documents: HostedDocument[] = []
 
-  const session = await auth()
-  if (session?.accessToken) {
-    canListDocuments = hasPermission(session.accessToken, 'list:documents')
-  }
+  const canListDocuments = await sessionHasPermission('list:documents')
 
   if (canListDocuments) {
     documents = await findAll()

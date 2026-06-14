@@ -4,10 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
 
 import { insert } from '@/lib/api/documents'
-import { hasPermission, tokenFromRequest, verifyToken } from '@/lib/jwt'
+import { authorize } from '@/lib/authorize'
 import { logger } from '@/lib/logger'
 
 export async function POST(
@@ -15,22 +14,11 @@ export async function POST(
   context: { params: Promise<{ version: string }> }
 ) {
   const { version } = await context.params
-  const session = await auth()
   const requestInfo = `${request.method} ${request.nextUrl.pathname}`
 
-  let authorized = false
-  if (session?.accessToken) {
-    logger.debug(`User authenticated (${session.user?.name})`)
-    authorized = hasPermission(session.accessToken, 'create:documents')
-  } else {
-    logger.debug('User not authenticated, checking for token')
-    const verifiedToken = await verifyToken(request)
-    if (verifiedToken) {
-      authorized = hasPermission(tokenFromRequest(request), 'create:documents')
-    }
-  }
+  const principal = await authorize(request, 'create:documents')
 
-  if (authorized) {
+  if (principal) {
     logger.debug('User has permission to create documents')
     if (version && version.match(new RegExp('^v[1-2]'))) {
       const payload = await request.json()
