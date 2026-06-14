@@ -1,0 +1,13 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "SPT DocuHost" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - heading "SPT DocuHost" [level=1] [ref=e5]
+      - button "Sign In" [ref=e7]
+  - main [ref=e8]:
+    - paragraph [ref=e11]:
+      - text: Please
+      - emphasis [ref=e12]: Sign In
+      - text: to view documents.
+  - alert [ref=e13]

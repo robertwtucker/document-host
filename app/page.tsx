@@ -6,7 +6,6 @@
 import { findAll } from '@/lib/api/documents'
 import { sessionHasPermission } from '@/lib/authorize'
 import DocumentList from '@/components/document-list'
-import SearchBar from '@/components/search-bar'
 
 export default async function Home() {
   const [canListDocuments, canDeleteDocuments] = await Promise.all([
@@ -19,14 +18,11 @@ export default async function Home() {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="mb-8 text-3xl font-bold">Documents</h1>
-        <div>
-          <SearchBar />
-          {documents.length === 0 ? (
-            <p className="text-muted-foreground text-center">No documents have been uploaded.</p>
-          ) : (
-            <DocumentList documents={documents} canDelete={canDeleteDocuments} />
-          )}
-        </div>
+        {documents.length === 0 ? (
+          <p className="text-muted-foreground text-center">No documents have been uploaded.</p>
+        ) : (
+          <DocumentList documents={documents} canDelete={canDeleteDocuments} />
+        )}
       </div>
     )
   } else {
