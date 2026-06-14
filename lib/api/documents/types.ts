@@ -16,6 +16,7 @@ export interface HostedDocument {
   url: string
   shortLink?: string
   uploadedAt?: Date
+  size?: number
 }
 
 /**

@@ -3,24 +3,29 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { findAll, HostedDocument } from '@/lib/api/documents'
+import { findAll } from '@/lib/api/documents'
 import { sessionHasPermission } from '@/lib/authorize'
 import DocumentList from '@/components/document-list'
 import SearchBar from '@/components/search-bar'
 
 export default async function Home() {
-  let documents: HostedDocument[] = []
-
-  const canListDocuments = await sessionHasPermission('list:documents')
+  const [canListDocuments, canDeleteDocuments] = await Promise.all([
+    sessionHasPermission('list:documents'),
+    sessionHasPermission('delete:documents'),
+  ])
 
   if (canListDocuments) {
-    documents = await findAll()
+    const documents = await findAll()
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="mb-8 text-3xl font-bold">Documents</h1>
         <div>
           <SearchBar />
-          <DocumentList documents={documents} />
+          {documents.length === 0 ? (
+            <p className="text-muted-foreground text-center">No documents have been uploaded.</p>
+          ) : (
+            <DocumentList documents={documents} canDelete={canDeleteDocuments} />
+          )}
         </div>
       </div>
     )

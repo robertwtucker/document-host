@@ -12,10 +12,15 @@ vi.mock('@/lib/logger', () => ({
 
 const mockFetch = vi.fn()
 const mockIsValidObjectId = vi.fn()
+const mockRemove = vi.fn()
 vi.mock('@/lib/api/documents', () => ({
   fetch: mockFetch,
   isValidObjectId: mockIsValidObjectId,
+  remove: mockRemove,
 }))
+
+const mockAuthorize = vi.fn()
+vi.mock('@/lib/authorize', () => ({ authorize: mockAuthorize }))
 
 function makeGetRequest(id: string): NextRequest {
   return new NextRequest(`http://localhost/api/v2/documents/${id}`)
@@ -43,6 +48,8 @@ beforeEach(() => {
     return id
   })
   mockFetch.mockResolvedValue(sampleFile)
+  mockRemove.mockResolvedValue(true)
+  mockAuthorize.mockResolvedValue(null)
 })
 
 describe('GET /api/[version]/documents/[id]', () => {
@@ -101,5 +108,51 @@ describe('GET /api/[version]/documents/[id]', () => {
       expect(res.headers.get('content-length')).toBe('12345')
       expect(res.headers.get('content-disposition')).toBe('inline')
     })
+  })
+})
+
+describe('DELETE /api/[version]/documents/[id]', () => {
+  const id = '64f1a2b3c4d5e6f7a8b9c0d1'
+
+  it('returns 400 for an unsupported version', async () => {
+    const { DELETE } = await import('@/app/api/[version]/documents/[id]/route')
+    const req = new NextRequest(`http://localhost/api/v3/documents/${id}`, { method: 'DELETE' })
+    const res = await DELETE(req, { params: Promise.resolve({ version: 'v3', id }) })
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 400 for an invalid ObjectId', async () => {
+    const { DELETE } = await import('@/app/api/[version]/documents/[id]/route')
+    const req = new NextRequest('http://localhost/api/v2/documents/invalid-id', { method: 'DELETE' })
+    const res = await DELETE(req, { params: Promise.resolve({ version: 'v2', id: 'invalid-id' }) })
+    expect(res.status).toBe(400)
+  })
+
+  it('returns 401 when authorize returns null', async () => {
+    const { DELETE } = await import('@/app/api/[version]/documents/[id]/route')
+    const req = new NextRequest(`http://localhost/api/v2/documents/${id}`, { method: 'DELETE' })
+    const res = await DELETE(req, { params: Promise.resolve({ version: 'v2', id }) })
+    expect(res.status).toBe(401)
+    expect(mockRemove).not.toHaveBeenCalled()
+  })
+
+  it('returns 404 when remove returns false', async () => {
+    const { DELETE } = await import('@/app/api/[version]/documents/[id]/route')
+    mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['delete:documents'] })
+    mockRemove.mockResolvedValue(false)
+    const req = new NextRequest(`http://localhost/api/v2/documents/${id}`, { method: 'DELETE' })
+    const res = await DELETE(req, { params: Promise.resolve({ version: 'v2', id }) })
+    expect(res.status).toBe(404)
+  })
+
+  it('returns 204 on successful delete', async () => {
+    const { DELETE } = await import('@/app/api/[version]/documents/[id]/route')
+    mockAuthorize.mockResolvedValue({ sub: 'user', permissions: ['delete:documents'] })
+    mockRemove.mockResolvedValue(true)
+    const req = new NextRequest(`http://localhost/api/v2/documents/${id}`, { method: 'DELETE' })
+    const res = await DELETE(req, { params: Promise.resolve({ version: 'v2', id }) })
+    expect(res.status).toBe(204)
+    expect(mockAuthorize).toHaveBeenCalledWith(req, 'delete:documents')
+    expect(mockRemove).toHaveBeenCalledWith(id)
   })
 })

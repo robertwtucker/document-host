@@ -5,7 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { fetch, HostedFile, isValidObjectId } from '@/lib/api/documents'
+import { fetch, HostedFile, isValidObjectId, remove } from '@/lib/api/documents'
+import { authorize } from '@/lib/authorize'
 import { logger } from '@/lib/logger'
 
 type Params = {
@@ -47,6 +48,39 @@ export async function GET(req: NextRequest, context: { params: Promise<Params> }
     logger.info(requestInfo, { status: 400 })
     return new NextResponse(null, { status: 400 })
   }
+}
+
+export async function DELETE(req: NextRequest, context: { params: Promise<Params> }) {
+  const { version, id } = await context.params
+  const requestInfo = `${req.method} ${req.nextUrl.pathname}`
+
+  if (!version || !version.match(new RegExp('^v[1-2]'))) {
+    logger.info(requestInfo, { status: 400 })
+    return new NextResponse(null, { status: 400 })
+  }
+
+  try {
+    isValidObjectId(id)
+  } catch (err) {
+    logger.error(err)
+    logger.info(requestInfo, { status: 400 })
+    return new NextResponse(null, { status: 400 })
+  }
+
+  const principal = await authorize(req, 'delete:documents')
+  if (!principal) {
+    logger.info(requestInfo, { status: 401 })
+    return new NextResponse(null, { status: 401 })
+  }
+
+  const deleted = await remove(id)
+  if (!deleted) {
+    logger.info(requestInfo, { status: 404 })
+    return new NextResponse(null, { status: 404 })
+  }
+
+  logger.info(requestInfo, { status: 204 })
+  return new NextResponse(null, { status: 204 })
 }
 
 function streamData(file: HostedFile): ReadableStream<Uint8Array> {

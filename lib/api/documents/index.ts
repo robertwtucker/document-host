@@ -20,10 +20,9 @@ export * from './types'
 export async function findAll(): Promise<HostedDocument[]> {
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
-  const files = await bucket.find().toArray()
+  const files = await bucket.find().sort({ uploadDate: -1 }).toArray()
   return files.map((file) => {
     const id = file._id.toHexString()
-    console.log('id:', id)
     return {
       id: id,
       filename: file.filename,
@@ -31,6 +30,8 @@ export async function findAll(): Promise<HostedDocument[]> {
       fileBase64: '[stored]',
       url: `${process.env.APP_URL}/${id}`,
       uploadedAt: file.uploadDate,
+      size: file.length,
+      shortLink: file.metadata?.shortLink,
     } as HostedDocument
   })
 }
@@ -55,6 +56,8 @@ export async function findOne(id: string): Promise<HostedDocument | null> {
     fileBase64: '[stored]',
     url: `${process.env.APP_URL}/${id}`,
     uploadedAt: files[0].uploadDate,
+    size: files[0].length,
+    shortLink: files[0].metadata?.shortLink,
   } as HostedDocument
 }
 
@@ -66,17 +69,25 @@ export async function insert(document: HostedDocument): Promise<HostedDocument |
   const client = await clientPromise
   const bucket = new GridFSBucket(client.db())
   const buffer = Buffer.from(document.fileBase64, 'base64')
+  const fileId = new ObjectId()
+  const url = `${process.env.APP_URL}/${fileId.toHexString()}`
+  const shortened = await shorten(url)
+  const shortLink = shortened?.shortlink
+
   const writeStream = bucket.openUploadStream(document.filename, {
-    metadata: { contentType: document.contentType.toLowerCase() },
+    id: fileId,
+    metadata: {
+      contentType: document.contentType.toLowerCase(),
+      ...(shortLink ? { shortLink } : {}),
+    },
   })
   Readable.from(buffer).pipe(writeStream)
 
-  document.id = writeStream.id.toHexString()
-  document.fileBase64 = '[stored]' // don't pass this back now that it's in the DB
-  document.url = `${process.env.APP_URL}/${document.id}`
-  const shortened = await shorten(document.url)
-  if (shortened && shortened.shortlink) {
-    document.shortLink = shortened.shortlink
+  document.id = fileId.toHexString()
+  document.fileBase64 = '[stored]'
+  document.url = url
+  if (shortLink) {
+    document.shortLink = shortLink
   }
 
   return document
@@ -107,6 +118,24 @@ export async function fetch(id: string): Promise<HostedFile | null> {
 
   logger.warn(`No content stream found for ${id}`)
   return null
+}
+
+/**
+ * @param id The ID of the document to delete
+ * @returns True if a document was deleted, false if no document with that id existed
+ */
+export async function remove(id: string): Promise<boolean> {
+  const client = await clientPromise
+  const bucket = new GridFSBucket(client.db())
+  const objectId = ObjectId.createFromHexString(id)
+  try {
+    await bucket.delete(objectId)
+    return true
+  } catch (err) {
+    // GridFSBucket.delete throws when the file doesn't exist
+    logger.warn(`Failed to delete document ${id}: ${err}`)
+    return false
+  }
 }
 
 /**

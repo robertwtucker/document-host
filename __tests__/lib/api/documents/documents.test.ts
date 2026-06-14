@@ -17,14 +17,17 @@ vi.mock('@/lib/shortlink', () => ({
 
 // Build a mock MongoDB client/bucket
 const mockToArray = vi.fn()
-const mockFind = vi.fn(() => ({ toArray: mockToArray }))
+const mockSort = vi.fn(() => ({ toArray: mockToArray }))
+const mockFind = vi.fn(() => ({ sort: mockSort, toArray: mockToArray }))
 const mockOpenUploadStream = vi.fn()
 const mockOpenDownloadStream = vi.fn()
+const mockDelete = vi.fn()
 
 const mockBucket = {
   find: mockFind,
   openUploadStream: mockOpenUploadStream,
   openDownloadStream: mockOpenDownloadStream,
+  delete: mockDelete,
 }
 
 vi.mock('mongodb', async (importOriginal) => {
@@ -129,10 +132,7 @@ describe('insert', () => {
   it('stores the document, clears fileBase64, and sets url + shortLink', async () => {
     const { insert } = await import('@/lib/api/documents')
     const { Writable } = await import('stream')
-    const fakeId = new ObjectId()
-    // Use a real Writable so Readable.pipe() works correctly
     const mockWritable = new Writable({ write(_chunk, _enc, cb) { cb() } }) as ReturnType<typeof mockOpenUploadStream>
-    mockWritable.id = fakeId
     mockOpenUploadStream.mockReturnValue(mockWritable)
 
     const doc = {
@@ -144,9 +144,34 @@ describe('insert', () => {
     }
 
     const result = await insert(doc)
-    expect(result?.id).toBe(fakeId.toHexString())
+
+    // insert() now generates the ObjectId itself and passes it as the opts.id
+    const passedOpts = mockOpenUploadStream.mock.calls[0][1]
+    const expectedId = passedOpts.id.toHexString()
+
+    expect(result?.id).toBe(expectedId)
     expect(result?.fileBase64).toBe('[stored]')
-    expect(result?.url).toBe(`http://localhost/api/v2/documents/${fakeId.toHexString()}`)
+    expect(result?.url).toBe(`http://localhost/api/v2/documents/${expectedId}`)
     expect(result?.shortLink).toBe('https://tinyurl.com/abc')
+    expect(passedOpts.metadata).toMatchObject({
+      contentType: 'application/pdf',
+      shortLink: 'https://tinyurl.com/abc',
+    })
+  })
+})
+
+describe('remove', () => {
+  it('returns true on successful delete', async () => {
+    const { remove } = await import('@/lib/api/documents')
+    mockDelete.mockResolvedValue(undefined)
+    const ok = await remove(new ObjectId().toHexString())
+    expect(ok).toBe(true)
+  })
+
+  it('returns false when GridFS throws (e.g., file not found)', async () => {
+    const { remove } = await import('@/lib/api/documents')
+    mockDelete.mockRejectedValue(new Error('FileNotFound'))
+    const ok = await remove(new ObjectId().toHexString())
+    expect(ok).toBe(false)
   })
 })
