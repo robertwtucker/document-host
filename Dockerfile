@@ -12,7 +12,7 @@ FROM base AS builder
 RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
-FROM gcr.io/distroless/nodejs24-debian12 AS runner
+FROM gcr.io/distroless/nodejs24-debian13 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
