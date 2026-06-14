@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-14
+
+### Added
+
+- Documents list rendered on the home page for users with the `list:documents` permission; each entry links to the document content (opens in a new tab) and shows file size, upload date, and the persisted tinyurl `shortLink`.
+- Per-entry delete button on each card for users with the `delete:documents` permission, backed by a new `DELETE /api/[version]/documents/[id]` endpoint and a server-action that revalidates the list.
+- `shortLink` is now persisted in GridFS `file.metadata` on insert so it survives across requests rather than only existing on the insert response.
+- `size` field on `HostedDocument` (populated from GridFS `file.length`).
+- Unit tests for the new `DELETE` route, `remove()` lib function, and the `sessionHasPermission` helper.
+
+### Changed
+
+- Consolidated OAuth verification: both NextAuth session and Bearer-header paths now share one `authorize()` helper that verifies the access token against the Auth0 JWKS, enforces audience/issuer, and checks the requested permission. Closes a gap where session tokens were permission-checked via unverified JWT decode.
+- JWKS resolver is now created lazily at module scope (was rebuilt per request).
+- UI gating in server components (`app/page.tsx`, `app/documents/[id]/page.tsx`) now goes through verified `sessionHasPermission()` instead of unverified decode.
+- `lib/jwt.ts` inlined into `lib/authorize.ts` so the entire auth surface lives in one file; only `authorize`, `sessionHasPermission`, and `verifyAccessToken` are exported.
+- Documents in the list are now sorted newest-first.
+- Bumped minor and patch versions across the board: `next` to 16.2.9, `react`/`react-dom` to 19.2.7, `mongodb` to 7.3.0, `tailwindcss` to 4.3.1, `vitest` to 4.1.8, `@typescript-eslint/*` to 8.61.0, and others.
+
+### Removed
+
+- Non-functional `SearchBar` component from the home page. Will revisit if real usage shows filtering is needed.
+
+### Fixed
+
+- `.gitignore` now covers `.env` (previously only `.env*.local`) so a stray `git add -A` can't commit local secrets.
+
+## [0.5.10] - 2026-04-13
+
+### Changed
+
+- Bumped `mongodb` to v7.1.0 ([#289](https://github.com/robertwtucker/document-host/pull/289))
+- Bumped `lucide-react` to v0.575.0 ([#288](https://github.com/robertwtucker/document-host/pull/288))
+- Bumped `@types/node` to v25.3.3 ([#290](https://github.com/robertwtucker/document-host/pull/290))
+- Applied security updates to `flatted` and `minimatch` ([#291](https://github.com/robertwtucker/document-host/pull/291), [#287](https://github.com/robertwtucker/document-host/pull/287))
+- Grouped npm_and_yarn dependency bumps ([#292](https://github.com/robertwtucker/document-host/pull/292))
+- Bumped version to 0.5.10 ([#293](https://github.com/robertwtucker/document-host/pull/293))
+
 ## [0.5.9] - 2025-02-25
 
 ### Added

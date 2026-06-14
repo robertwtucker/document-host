@@ -1,6 +1,6 @@
 {
   "name": "document-host",
-  "version": "0.5.10",
+  "version": "0.6.0",
   "description": "Provides temporary storage for demo-generated documents",
   "private": true,
   "scripts": {
