@@ -17,6 +17,14 @@ updates:
         patterns:
           - next
           - eslint-config-next
+      # typescript-eslint packages must share the same version
+      typescript-eslint:
+        patterns:
+          - "@typescript-eslint/*"
+    ignore:
+      # @types/node tracks the Node 24 runtime
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
