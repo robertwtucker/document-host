@@ -4,6 +4,23 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      # react-dom must match react exactly at runtime
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      # eslint-config-next is kept in lockstep with next
+      next:
+        patterns:
+          - next
+          - eslint-config-next
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
   - package-ecosystem: docker
     directory: /
     schedule:
